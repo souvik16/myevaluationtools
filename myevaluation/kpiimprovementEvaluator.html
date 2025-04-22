@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI Improvement Initiative Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f9fc;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #2f4050;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #20c997;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #17a589;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #ebf9f4;
+      border-left: 6px solid #20c997;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>KPI Improvement Initiative Evaluation</h2>
+
+    <label>Initiative Summary:</label>
+    <textarea id="initiativeSummary"></textarea>
+
+    <label>Expected KPI Uplift (1–5):</label>
+    <input type="number" id="uplift" min="1" max="5">
+
+    <label>Confidence in Hypothesis (1–5):</label>
+    <input type="number" id="confidence" min="1" max="5">
+
+    <label>Customer Impact / Retention Benefit (1–5):</label>
+    <input type="number" id="customerImpact" min="1" max="5">
+
+    <label>Time to Show Results (1–5, lower is better):</label>
+    <input type="number" id="timeToImpact" min="1" max="5">
+
+    <label>Implementation Effort (1–5, lower is better):</label>
+    <input type="number" id="effort" min="1" max="5">
+
+    <label>Cross-Team Alignment Required (1–5, lower is better):</label>
+    <input type="number" id="alignment" min="1" max="5">
+
+    <button onclick="evaluateKPI()">Evaluate Initiative</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateKPI() {
+      const uplift = parseInt(document.getElementById('uplift').value) || 0;
+      const confidence = parseInt(document.getElementById('confidence').value) || 0;
+      const customerImpact = parseInt(document.getElementById('customerImpact').value) || 0;
+      const timeToImpact = parseInt(document.getElementById('timeToImpact').value) || 0;
+      const effort = parseInt(document.getElementById('effort').value) || 0;
+      const alignment = parseInt(document.getElementById('alignment').value) || 0;
+
+      const positiveScore = uplift + confidence + customerImpact;
+      const penalty = timeToImpact + effort + alignment;
+      const finalScore = positiveScore - penalty;
+
+      let recommendation = '';
+      let message = '';
+
+      if (finalScore >= 10) {
+        recommendation = '🚀 High ROI';
+        message = 'Prioritize this initiative';
+      } else if (finalScore >= 5) {
+        recommendation = '✅ Moderate ROI';
+        message = 'Consider if bandwidth allows';
+      } else if (finalScore >= 1) {
+        recommendation = '⏳ Low ROI';
+        message = 'Low confidence or high cost, de-prioritize';
+      } else {
+        recommendation = '❌ Drop It';
+        message = 'Not worth the effort or risk';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Initiative:</strong> ${document.getElementById('initiativeSummary').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 15<br>` +
+        `<strong>Recommendation:</strong> ${recommendation}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

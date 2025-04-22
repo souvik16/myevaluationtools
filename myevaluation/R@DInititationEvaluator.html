@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R&D Initiative Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fa;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #34495e;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #6f42c1;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #5936a2;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #f6f1ff;
+      border-left: 6px solid #6f42c1;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>R&D Initiative Evaluation</h2>
+
+    <label>Initiative Name / Idea:</label>
+    <textarea id="initiativeName"></textarea>
+
+    <label>Future Market Relevance (1–5):</label>
+    <input type="number" id="relevance" min="1" max="5">
+
+    <label>Tech Learning Potential (1–5):</label>
+    <input type="number" id="learning" min="1" max="5">
+
+    <label>Innovation / IP Potential (1–5):</label>
+    <input type="number" id="ip" min="1" max="5">
+
+    <label>Prototyping Cost (1–5, lower is better):</label>
+    <input type="number" id="cost" min="1" max="5">
+
+    <label>Team Excitement / Curiosity (1–5):</label>
+    <input type="number" id="teamExcitement" min="1" max="5">
+
+    <label>Potential Strategic Leverage (1–5):</label>
+    <input type="number" id="leverage" min="1" max="5">
+
+    <label>Market Signal or Early Trend (1–5):</label>
+    <input type="number" id="signal" min="1" max="5">
+
+    <button onclick="evaluateInitiative()">Evaluate Initiative</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateInitiative() {
+      const relevance = parseInt(document.getElementById('relevance').value) || 0;
+      const learning = parseInt(document.getElementById('learning').value) || 0;
+      const ip = parseInt(document.getElementById('ip').value) || 0;
+      const cost = parseInt(document.getElementById('cost').value) || 0;
+      const excitement = parseInt(document.getElementById('teamExcitement').value) || 0;
+      const leverage = parseInt(document.getElementById('leverage').value) || 0;
+      const signal = parseInt(document.getElementById('signal').value) || 0;
+
+      const positiveScore = relevance + learning + ip + excitement + leverage + signal;
+      const finalScore = positiveScore - cost;
+
+      let recommendation = '';
+      let message = '';
+
+      if (finalScore >= 22) {
+        recommendation = '🚀 Explore Deeply';
+        message = 'Start prototyping and internal review';
+      } else if (finalScore >= 16) {
+        recommendation = '✅ Worth Testing';
+        message = 'Setup limited POC or learning sprint';
+      } else if (finalScore >= 10) {
+        recommendation = '⏳ Interesting';
+        message = 'Monitor as trend, revisit if signals improve';
+      } else {
+        recommendation = '❌ Pass for Now';
+        message = 'Low expected outcome vs cost';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Initiative:</strong> ${document.getElementById('initiativeName').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 30<br>` +
+        `<strong>Recommendation:</strong> ${recommendation}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

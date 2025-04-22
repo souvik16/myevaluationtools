@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lean Canvas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fb;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .canvas-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      margin: 30px auto;
+    }
+    .canvas-section {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      color: #1a5276;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    textarea {
+      flex-grow: 1;
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f9fcff;
+      resize: vertical;
+      min-height: 100px;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 18px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+    .full-width {
+      grid-column: span 3;
+    }
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+</style>
+</head>
+<body>
+
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>🧩 Lean Canvas</h1>
+  <div class="canvas-board">
+    <div class="canvas-section">
+      <label for="problem">🚨 Problem</label>
+      <textarea id="problem" placeholder="Top 3 problems you’re solving"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="customerSegments">👤 Customer Segments</label>
+      <textarea id="customerSegments" placeholder="Target customers and users"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="uniqueValue">💎 Unique Value Proposition</label>
+      <textarea id="uniqueValue" placeholder="Clear and compelling message"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="solution">🛠 Solution</label>
+      <textarea id="solution" placeholder="Outline a possible solution for each problem"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="channels">📣 Channels</label>
+      <textarea id="channels" placeholder="Path to customers"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="revenue">💰 Revenue Streams</label>
+      <textarea id="revenue" placeholder="How will you make money?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="cost">📉 Cost Structure</label>
+      <textarea id="cost" placeholder="Fixed and variable costs"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="keyMetrics">📊 Key Metrics</label>
+      <textarea id="keyMetrics" placeholder="How will you measure success?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="unfairAdvantage">🏆 Unfair Advantage</label>
+      <textarea id="unfairAdvantage" placeholder="Something that can’t easily be copied or bought"></textarea>
+    </div>
+  </div>
+
+  <button onclick="downloadCanvas()">📥 Download Lean Canvas</button>
+
+  <script>
+    function downloadCanvas() {
+      const fields = [
+        ['Problem', 'problem'],
+        ['Customer Segments', 'customerSegments'],
+        ['Unique Value Proposition', 'uniqueValue'],
+        ['Solution', 'solution'],
+        ['Channels', 'channels'],
+        ['Revenue Streams', 'revenue'],
+        ['Cost Structure', 'cost'],
+        ['Key Metrics', 'keyMetrics'],
+        ['Unfair Advantage', 'unfairAdvantage']
+      ];
+
+      let summary = 'Lean Canvas Summary\n\n';
+      fields.forEach(([label, id]) => {
+        const value = document.getElementById(id).value.trim();
+        summary += `${label}:\n${value}\n\n`;
+      });
+
+      const blob = new Blob([summary], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Lean_Canvas.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+
+  <script>
+    const notesBox = document.getElementById('globalNotes');
+    const notesPanel = document.getElementById('notesPanel');
+    const toggleBtn = document.getElementById('notesToggle');
+    toggleBtn.addEventListener('click', () => {
+      notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+    });
+    notesBox.value = '';
+    function getNotesContent() {
+      return notesBox.value.trim();
+    }
+
+    const originalDownload = downloadCanvas;
+    downloadCanvas = function() {
+      let notes = getNotesContent();
+      const origBlob = Blob;
+      Blob = function(parts, opts) {
+        parts[0] += "\n\n📝 Notes:\n" + (notes || "No notes added.");
+        return new origBlob(parts, opts);
+      };
+      originalDownload();
+      Blob = origBlob;
+    };
+  </script>
+
+</body>
+</html>

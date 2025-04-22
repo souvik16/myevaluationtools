@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porter's Five Forces Visual Evaluator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fdfdfd;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 40px;
+    }
+    .container {
+      display: grid;
+      grid-template-areas:
+        '. entrant .'
+        'supplier rivalry buyer'
+        '. substitute .';
+      gap: 20px;
+    }
+    .force-box {
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      width: 250px;
+      transition: border-color 0.3s, background-color 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .force-box select {
+      margin-top: 10px;
+      padding: 8px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .result {
+      margin-top: 10px;
+      font-style: italic;
+      font-weight: bold;
+    }
+    #entrant { grid-area: entrant; }
+    #supplier { grid-area: supplier; }
+    #rivalry { grid-area: rivalry; }
+    #buyer { grid-area: buyer; }
+    #substitute { grid-area: substitute; }
+  </style>
+</head>
+<body>
+  <h1>Porter's Five Forces</h1>
+  <div class="container">
+    <div class="force-box" id="entrant">
+      <strong>Threat of New Entrants</strong>
+      <div>Barriers to entry</div>
+      <select onchange="updateAction(this, 'entrant')">
+        <option value="">--Priority--</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <div class="result" id="result-entrant"></div>
+    </div>
+    <div class="force-box" id="supplier">
+      <strong>Bargaining Power of Suppliers</strong>
+      <div>Pressure from suppliers</div>
+      <select onchange="updateAction(this, 'supplier')">
+        <option value="">--Priority--</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <div class="result" id="result-supplier"></div>
+    </div>
+    <div class="force-box" id="rivalry">
+      <strong>Competitive Rivalry</strong>
+      <div>Intensity of competition among existing firms</div>
+      <select onchange="updateAction(this, 'rivalry')">
+        <option value="">--Priority--</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <div class="result" id="result-rivalry"></div>
+    </div>
+    <div class="force-box" id="buyer">
+      <strong>Bargaining Power of Buyers</strong>
+      <div>Pressure from customers</div>
+      <select onchange="updateAction(this, 'buyer')">
+        <option value="">--Priority--</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <div class="result" id="result-buyer"></div>
+    </div>
+    <div class="force-box" id="substitute">
+      <strong>Threat of Substitutes</strong>
+      <div>Availability of substitute products</div>
+      <select onchange="updateAction(this, 'substitute')">
+        <option value="">--Priority--</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <div class="result" id="result-substitute"></div>
+    </div>
+  </div>
+
+  <script>
+    function updateAction(selectElem, sectionId) {
+      const value = selectElem.value;
+      const resultElem = document.getElementById('result-' + sectionId);
+      const box = document.getElementById(sectionId);
+      let action = '';
+
+      // Reset color
+      box.style.borderColor = '#ccc';
+      box.style.backgroundColor = '#fff';
+
+      if (value === 'High') {
+        action = '⚠️ Critical: Requires immediate strategic response.';
+        box.style.borderColor = '#e74c3c';
+        box.style.backgroundColor = '#fdecea';
+      } else if (value === 'Medium') {
+        action = '📊 Monitor closely and prepare mitigation strategies.';
+        box.style.borderColor = '#f1c40f';
+        box.style.backgroundColor = '#fffaf0';
+      } else if (value === 'Low') {
+        action = '✅ Low concern, review during periodic planning.';
+        box.style.borderColor = '#2ecc71';
+        box.style.backgroundColor = '#ecfdf4';
+      } else {
+        action = '';
+      }
+      resultElem.textContent = action;
+    }
+  </script>
+</body>
+</html>

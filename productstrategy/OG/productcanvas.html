@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Strategy Canvas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fb;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .canvas-board {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto auto auto auto;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .canvas-section {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      color: #1a5276;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    textarea {
+      flex-grow: 1;
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f9fcff;
+      resize: vertical;
+      min-height: 100px;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 18px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧭 Product Strategy Canvas</h1>
+  <div class="canvas-board">
+    <div class="canvas-section">
+      <label for="vision">🌟 Vision</label>
+      <textarea id="vision" placeholder="What’s the long-term vision for this product?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="targetUsers">👥 Target Users</label>
+      <textarea id="targetUsers" placeholder="Who are your ideal users or customers?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="userNeeds">🧠 User Needs / Problems</label>
+      <textarea id="userNeeds" placeholder="What problems are you solving for them?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="valueProp">💡 Unique Value Proposition</label>
+      <textarea id="valueProp" placeholder="What makes your solution unique and compelling?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="solutions">⚙️ Product Solution</label>
+      <textarea id="solutions" placeholder="What features, flows, or offerings meet the needs?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="metrics">📏 Success Metrics</label>
+      <textarea id="metrics" placeholder="How will you measure success for users and business?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="channels">📣 Go-to-Market Channels</label>
+      <textarea id="channels" placeholder="How will the product reach users?"></textarea>
+    </div>
+    <div class="canvas-section">
+      <label for="risks">⚠️ Key Risks & Challenges</label>
+      <textarea id="risks" placeholder="What are the main assumptions, risks, or barriers?"></textarea>
+    </div>
+  </div>
+
+  <button onclick="downloadCanvas()">📥 Download Canvas</button>
+
+  <script>
+    function downloadCanvas() {
+      const fields = [
+        ['Vision', 'vision'],
+        ['Target Users', 'targetUsers'],
+        ['User Needs', 'userNeeds'],
+        ['Unique Value Proposition', 'valueProp'],
+        ['Product Solution', 'solutions'],
+        ['Success Metrics', 'metrics'],
+        ['Go-to-Market Channels', 'channels'],
+        ['Key Risks', 'risks']
+      ];
+      let summary = 'Product Strategy Canvas\n\n';
+      fields.forEach(([label, id]) => {
+        const value = document.getElementById(id).value.trim();
+        summary += `${label}:\n${value}\n\n`;
+      });
+
+      const blob = new Blob([summary], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Product_Strategy_Canvas.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

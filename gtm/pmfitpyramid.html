@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product/Market Fit Pyramid</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fb;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .pyramid-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .pmf-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 10px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .pmf-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 220px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .pmf-card input[type="text"] {
+      font-weight: bold;
+      color: #1a5276;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 6px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .pmf-card textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #f9fcff;
+      height: 100px;
+      resize: vertical;
+    }
+    .actions {
+      margin-top: 30px;
+    }
+    .add-section-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .add-section-btn:hover {
+      background-color: #27ae60;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+</style>
+</head>
+<body>
+
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>Product/Market Fit Pyramid</h1>
+  <div class="pyramid-container" id="pyramidContainer"></div>
+
+  <div class="actions">
+    <button onclick="addPMFRow()">➕ Add Pyramid Layer</button>
+    <button onclick="downloadPMF()">📥 Download Summary</button>
+  </div>
+
+  <script>
+    function createPMFCard(labelText, placeholderText, editable = false) {
+      const card = document.createElement('div');
+      card.className = 'pmf-card';
+
+      if (editable) {
+        card.innerHTML = `
+          <input type="text" value="${labelText}" placeholder="Section Title"/>
+          <textarea placeholder="${placeholderText}"></textarea>
+        `;
+      } else {
+        card.innerHTML = `
+          <input type="text" value="${labelText}" readonly/>
+          <textarea placeholder="${placeholderText}"></textarea>
+        `;
+      }
+
+      return card;
+    }
+
+    function createDefaultRow() {
+      const row = document.createElement('div');
+      row.className = 'pmf-row';
+
+      row.appendChild(createPMFCard("👤 Target Customer", "Describe the user or segment..."));
+      row.appendChild(createPMFCard("😩 Underserved Needs", "Pain points or unmet needs..."));
+      row.appendChild(createPMFCard("💡 Value Proposition", "What unique value do you offer?"));
+      row.appendChild(createPMFCard("⚙️ Feature Set", "Key features solving the need..."));
+      row.appendChild(createPMFCard("🎯 User Experience (UX)", "Experience or flow that delivers it..."));
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-section-btn';
+      addBtn.innerText = '➕ Add Section';
+      addBtn.onclick = () => addCustomCard(addBtn);
+      row.appendChild(addBtn);
+
+      return row;
+    }
+
+    function addPMFRow() {
+      const container = document.getElementById('pyramidContainer');
+      container.appendChild(createDefaultRow());
+    }
+
+    function addCustomCard(button) {
+      const row = button.closest('.pmf-row');
+      const newCard = createPMFCard("🧩 Custom Section", "Enter your content...", true);
+      row.insertBefore(newCard, button);
+    }
+
+    function downloadPMF() {
+      const rows = document.querySelectorAll('.pmf-row');
+      let text = 'Product/Market Fit Pyramid Summary\n\n';
+      rows.forEach((row, i) => {
+        const cards = row.querySelectorAll('.pmf-card');
+        text += `Pyramid Layer ${i + 1}\n`;
+        cards.forEach((card, index) => {
+          const label = card.querySelector('input').value.trim();
+          const content = card.querySelector('textarea').value.trim();
+          text += `${label}:\n${content}\n\n`;
+        });
+      });
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'PMF_Pyramid_Summary.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addPMFRow;
+  </script>
+
+  <script>
+    const notesBox = document.getElementById('globalNotes');
+    const notesPanel = document.getElementById('notesPanel');
+    const toggleBtn = document.getElementById('notesToggle');
+    toggleBtn.addEventListener('click', () => {
+      notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+    });
+    notesBox.value = '';
+    function getNotesContent() {
+      return notesBox.value.trim();
+    }
+
+    const originalDownload = downloadPMF;
+    downloadPMF = function() {
+      let notes = getNotesContent();
+      const origBlob = Blob;
+      Blob = function(parts, opts) {
+        parts[0] += "\n\n📝 Notes:\n" + (notes || "No notes added.");
+        return new origBlob(parts, opts);
+      };
+      originalDownload();
+      Blob = origBlob;
+    };
+  </script>
+
+</body>
+</html>

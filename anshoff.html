@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansoff Matrix Selector</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      background-color: #f4f9fd;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    p.description {
+      margin-bottom: 30px;
+      color: #555;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .cell {
+      padding: 20px;
+      background-color: #ffffff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+    .cell:hover {
+      transform: scale(1.03);
+      background-color: #eaf2f8;
+    }
+    .cell.selected {
+      background-color: #3498db;
+      color: white;
+      border-color: #2980b9;
+    }
+    .label {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .description {
+      font-size: 14px;
+    }
+    #output {
+      margin-top: 30px;
+      font-size: 16px;
+      font-style: italic;
+      color: #1d3557;
+      background: #e8f4fc;
+      display: inline-block;
+      padding: 15px 25px;
+      border-radius: 10px;
+      border-left: 5px solid #3498db;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ansoff Matrix</h1>
+  <p class="description">Select the quadrant where your product strategy lies:</p>
+  <div class="matrix-grid">
+    <div class="cell" onclick="selectCell(this, 'Market Penetration')">
+      <div class="label">Market Penetration</div>
+      <div class="description">Existing Product + Existing Market</div>
+    </div>
+    <div class="cell" onclick="selectCell(this, 'Product Development')">
+      <div class="label">Product Development</div>
+      <div class="description">New Product + Existing Market</div>
+    </div>
+    <div class="cell" onclick="selectCell(this, 'Market Development')">
+      <div class="label">Market Development</div>
+      <div class="description">Existing Product + New Market</div>
+    </div>
+    <div class="cell" onclick="selectCell(this, 'Diversification')">
+      <div class="label">Diversification</div>
+      <div class="description">New Product + New Market</div>
+    </div>
+  </div>
+  <div id="output"></div>
+
+  <script>
+    let selectedCell = null;
+
+    function selectCell(el, label) {
+      if (selectedCell) selectedCell.classList.remove('selected');
+      el.classList.add('selected');
+      selectedCell = el;
+      document.getElementById('output').innerText = `Your selected strategy is: "${label}"`;
+    }
+  </script>
+</body>
+</html>

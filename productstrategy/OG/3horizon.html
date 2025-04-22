@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>McKinsey 3 Horizons Framework</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background-color: #f4f8fb;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .framework {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .horizon {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .horizon:hover {
+      transform: translateY(-5px);
+    }
+    .horizon h2 {
+      text-align: center;
+      font-size: 20px;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .horizon p {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>McKinsey 3 Horizons Framework</h1>
+  <div class="framework">
+    <div class="horizon">
+      <h2>Horizon 1: Core Business</h2>
+      <p>Focus on defending and extending existing core businesses for immediate performance.</p>
+      <textarea id="horizon1" placeholder="Enter key initiatives or insights for Horizon 1..."></textarea>
+    </div>
+    <div class="horizon">
+      <h2>Horizon 2: Emerging Opportunities</h2>
+      <p>Identify and scale emerging opportunities with high growth potential over the mid-term.</p>
+      <textarea id="horizon2" placeholder="Enter key initiatives or insights for Horizon 2..."></textarea>
+    </div>
+    <div class="horizon">
+      <h2>Horizon 3: Future Vision</h2>
+      <p>Explore visionary ideas and strategic investments for long-term transformation.</p>
+      <textarea id="horizon3" placeholder="Enter key initiatives or insights for Horizon 3..."></textarea>
+    </div>
+  </div>
+
+  <button onclick="downloadHorizons()">📥 Download Horizon Strategy</button>
+
+  <script>
+    function downloadHorizons() {
+      const h1 = document.getElementById('horizon1').value.trim();
+      const h2 = document.getElementById('horizon2').value.trim();
+      const h3 = document.getElementById('horizon3').value.trim();
+
+      const content = `McKinsey 3 Horizons Strategy\n\nHorizon 1 - Core Business:\n${h1}\n\nHorizon 2 - Emerging Opportunities:\n${h2}\n\nHorizon 3 - Future Vision:\n${h3}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '3_Horizons_Strategy.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

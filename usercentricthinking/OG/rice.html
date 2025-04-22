@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RICE Prioritization Framework</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fb;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .container {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .rice-row {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      min-width: 1200px;
+      transition: background-color 0.3s;
+    }
+    .section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .section h2 {
+      font-size: 14px;
+      color: #1a5276;
+      margin-bottom: 5px;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #f9fcff;
+    }
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    .score {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #34495e;
+    }
+    .actions {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+  </style>
+</head>
+<body>
+  <h1>RICE Prioritization</h1>
+  <p class="description">Evaluate initiatives using Reach, Impact, Confidence, and Effort to calculate a priority score.</p>
+
+  <div id="riceContainer" class="container"></div>
+
+  <div class="actions">
+    <button onclick="addRICE()">➕ Add Another Initiative</button>
+    <button onclick="sortRICE()">🔃 Sort by Score</button>
+    <button onclick="downloadRICE()">📥 Download RICE Summary</button>
+  </div>
+
+  <script>
+    function createRICEElement() {
+      const row = document.createElement('div');
+      row.className = 'rice-row';
+      row.innerHTML = `
+        <div class="section">
+          <h2>Feature / Idea</h2>
+          <textarea placeholder="Describe the feature or idea..."></textarea>
+        </div>
+        <div class="section">
+          <h2>Reach</h2>
+          <input type="number" min="0" step="1" oninput="updateScore(this)">
+        </div>
+        <div class="section">
+          <h2>Impact</h2>
+          <input type="number" min="0" max="3" step="0.1" oninput="updateScore(this)">
+        </div>
+        <div class="section">
+          <h2>Confidence (%)</h2>
+          <input type="number" min="0" max="100" step="1" oninput="updateScore(this)">
+        </div>
+        <div class="section">
+          <h2>Effort</h2>
+          <input type="number" min="0.1" step="0.1" oninput="updateScore(this)">
+        </div>
+        <div class="section">
+          <h2>RICE Score</h2>
+          <div class="score">0.00</div>
+        </div>
+      `;
+      return row;
+    }
+
+    function addRICE() {
+      const container = document.getElementById('riceContainer');
+      const newRow = createRICEElement();
+      container.appendChild(newRow);
+    }
+
+    function updateScore(input) {
+      const row = input.closest('.rice-row');
+      const fields = row.querySelectorAll('input');
+      const scoreEl = row.querySelector('.score');
+
+      const reach = parseFloat(fields[0].value) || 0;
+      const impact = parseFloat(fields[1].value) || 0;
+      const confidence = parseFloat(fields[2].value) / 100 || 0;
+      const effort = parseFloat(fields[3].value) || 1;
+
+      const score = ((reach * impact * confidence) / effort).toFixed(2);
+      scoreEl.textContent = score;
+
+      if (score >= 20) {
+        row.style.backgroundColor = '#d4efdf'; // Green
+      } else if (score >= 10) {
+        row.style.backgroundColor = '#fcf3cf'; // Yellow
+      } else {
+        row.style.backgroundColor = '#f5b7b1'; // Red
+      }
+    }
+
+    function sortRICE() {
+      const container = document.getElementById('riceContainer');
+      const rows = Array.from(container.querySelectorAll('.rice-row'));
+      rows.sort((a, b) => {
+        const scoreA = parseFloat(a.querySelector('.score').textContent);
+        const scoreB = parseFloat(b.querySelector('.score').textContent);
+        return scoreB - scoreA;
+      });
+      container.innerHTML = '';
+      rows.forEach(row => container.appendChild(row));
+    }
+
+    function downloadRICE() {
+      const rows = document.querySelectorAll('.rice-row');
+      let output = 'RICE Prioritization Summary\n\n';
+
+      rows.forEach((row, index) => {
+        const fields = row.querySelectorAll('textarea, input');
+        const score = row.querySelector('.score').textContent;
+        output += `Initiative #${index + 1}\n`;
+        output += `Feature/Idea: ${fields[0].value.trim()}\n`;
+        output += `Reach: ${fields[1].value}, Impact: ${fields[2].value}, Confidence: ${fields[3].value}%, Effort: ${fields[4].value}\n`;
+        output += `RICE Score: ${score}\n\n`;
+      });
+
+      const blob = new Blob([output], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'RICE_Prioritization.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addRICE;
+  </script>
+</body>
+</html>

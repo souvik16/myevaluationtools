@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feature Prioritization Matrix</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fb;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .input-area {
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+    input, select {
+      padding: 10px;
+      font-size: 14px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 10px;
+      width: 600px;
+      height: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .quadrant {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+      position: relative;
+    }
+    .quadrant h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #1a5276;
+    }
+    .quadrant ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .quadrant li {
+      background: #e3f2fd;
+      margin: 5px 0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Product/Feature Prioritization Matrix</h1>
+
+  <div class="input-area">
+    <input type="text" id="featureName" placeholder="Feature name"/>
+    <select id="value">
+      <option value="high">High Value</option>
+      <option value="low">Low Value</option>
+    </select>
+    <select id="effort">
+      <option value="low">Low Effort</option>
+      <option value="high">High Effort</option>
+    </select>
+    <button onclick="addFeature()">➕ Add Feature</button>
+    <button onclick="downloadFeatures()">📥 Download List</button>
+  </div>
+
+  <div class="matrix">
+    <div class="quadrant" id="q1"><h2>🔥 High Value / Low Effort</h2><ul></ul></div>
+    <div class="quadrant" id="q2"><h2>⏳ High Value / High Effort</h2><ul></ul></div>
+    <div class="quadrant" id="q3"><h2>✅ Low Value / Low Effort</h2><ul></ul></div>
+    <div class="quadrant" id="q4"><h2>⚠️ Low Value / High Effort</h2><ul></ul></div>
+  </div>
+
+  <script>
+    function addFeature() {
+      const name = document.getElementById('featureName').value.trim();
+      const value = document.getElementById('value').value;
+      const effort = document.getElementById('effort').value;
+
+      if (!name) return alert("Please enter a feature name");
+
+      let quadrantId = '';
+      if (value === 'high' && effort === 'low') quadrantId = 'q1';
+      else if (value === 'high' && effort === 'high') quadrantId = 'q2';
+      else if (value === 'low' && effort === 'low') quadrantId = 'q3';
+      else if (value === 'low' && effort === 'high') quadrantId = 'q4';
+
+      const list = document.querySelector(`#${quadrantId} ul`);
+      const item = document.createElement('li');
+      item.textContent = name;
+      list.appendChild(item);
+
+      document.getElementById('featureName').value = '';
+    }
+
+    function downloadFeatures() {
+      const quadrants = ['q1', 'q2', 'q3', 'q4'];
+      const titles = {
+        'q1': 'High Value / Low Effort',
+        'q2': 'High Value / High Effort',
+        'q3': 'Low Value / Low Effort',
+        'q4': 'Low Value / High Effort'
+      };
+
+      let text = 'Feature Prioritization Matrix\n\n';
+      quadrants.forEach(id => {
+        text += `=== ${titles[id]} ===\n`;
+        const items = document.querySelectorAll(`#${id} ul li`);
+        items.forEach(li => {
+          text += `- ${li.textContent}\n`;
+        });
+        text += '\n';
+      });
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Feature_Prioritization_Matrix.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = () => document.getElementById('featureName').focus();
+  </script>
+</body>
+</html>

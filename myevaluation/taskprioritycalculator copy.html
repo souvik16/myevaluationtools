@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task Priority Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fb;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .task-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      gap: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .task-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 160px;
+      min-width: 140px;
+    }
+    .task-cell label {
+      font-size: 13px;
+      font-weight: bold;
+    }
+    input, select {
+      font-size: 14px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    input[type="number"] {
+      width: 100%;
+    }
+    input.name {
+      width: 100%;
+    }
+
+    .score-box {
+      background: #f9f9f9;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: normal;
+      min-width: 250px;
+      flex: 1 1 250px;
+      border-left: 4px solid #007bff;
+    }
+    .score-box .highlight {
+      font-weight: bold;
+    }
+
+    .controls {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 10px 8px;
+      font-size: 14px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2c80b4;
+    }
+
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+    @media screen and (max-width: 768px) {
+      .task-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>🧮 Task Priority Evaluator</h1>
+  <div class="controls">
+    <button onclick="addTask()">➕ Add Task</button>
+    <button onclick="sortTasks()">📊 Sort by Score</button>
+    <button onclick="downloadTasks()">📥 Download</button>
+  </div>
+  <div id="taskContainer"></div>
+
+  <script>
+    const notesBox = document.getElementById('globalNotes');
+    const notesPanel = document.getElementById('notesPanel');
+    const toggleBtn = document.getElementById('notesToggle');
+    toggleBtn.addEventListener('click', () => {
+      notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+    });
+    notesBox.value = '';
+    function getNotesContent() {
+      return notesBox.value.trim();
+    }
+
+    function getPriorityLabel(score) {
+      if (score >= 16) return { label: "🚀 High Priority", note: "Highly aligned for action" };
+      if (score >= 11) return { label: "🟡 Medium Priority", note: "Consider for roadmap" };
+      if (score >= 6)  return { label: "⚪ Review Later", note: "Needs more alignment" };
+      return { label: "❌ Defer", note: "Not aligned currently" };
+    }
+
+    function evaluateTask(row) {
+      const inputs = row.querySelectorAll('input[type="number"]');
+      let score = 0;
+      for (let input of inputs) {
+        let val = parseInt(input.value);
+        if (val < 1 || val > 5) {
+          row.setAttribute('data-score', '0');
+          row.querySelector('.final-score').textContent = `0/20`;
+          row.querySelector('.priority-label').textContent = "❌ Defer";
+          row.querySelector('.priority-note').textContent = "Not aligned currently";
+          return;
+        }
+        score += val;
+      }
+      const finalScore = row.querySelector('.final-score');
+      const priorityLabel = row.querySelector('.priority-label');
+      const priorityNote = row.querySelector('.priority-note');
+      const outcome = getPriorityLabel(score);
+      row.setAttribute('data-score', score);
+      finalScore.textContent = `${score}/20`;
+      priorityLabel.textContent = outcome.label;
+      priorityNote.textContent = outcome.note;
+    }
+
+    function addTask() {
+      const container = document.getElementById('taskContainer');
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      row.setAttribute('data-score', '0');
+      row.innerHTML = `
+        <div class="task-cell"><label>Task</label><input class="name" placeholder="Task Name" /></div>
+        <div class="task-cell"><label>Revenue<br/><small>(Rate 1–5)</small></label><input type="number" min="1" max="5" /></div>
+        <div class="task-cell"><label>Fit<br/><small>(Rate 1–5)</small></label><input type="number" min="1" max="5" /></div>
+        <div class="task-cell"><label>TTV<br/><small>(Rate 1–5)</small></label><input type="number" min="1" max="5" /></div>
+        <div class="task-cell"><label>Feasibility<br/><small>(Rate 1–5)</small></label><input type="number" min="1" max="5" /></div>
+        <div class="task-cell"><label>Validated</label>
+          <select>
+            <option value="Y">✅ Yes</option>
+            <option value="N">❌ No</option>
+          </select>
+        </div>
+        <div class="score-box">
+          <div><span class="highlight">Final Score:</span><br/><span class="final-score">0/20</span></div>
+          <div><span class="highlight">Priority Action:</span><br/><span class="priority-label">❌ Defer</span></div>
+          <div><span class="highlight">Notes/Response:</span><br/><span class="priority-note">Not aligned currently</span></div>
+        </div>
+      `;
+      container.appendChild(row);
+
+      // Auto trigger update on input change
+      const inputs = row.querySelectorAll('input[type="number"]');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => evaluateTask(row));
+      });
+    }
+
+    function sortTasks() {
+      const container = document.getElementById('taskContainer');
+      const rows = Array.from(container.children);
+      rows.sort((a, b) => parseInt(b.dataset.score || 0) - parseInt(a.dataset.score || 0));
+      rows.forEach(row => container.appendChild(row));
+    }
+
+    function downloadTasks() {
+      const tasks = document.querySelectorAll('.task-row');
+      let content = "Task Priority Evaluation Summary\n\n";
+      tasks.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        const selects = row.querySelector('select');
+        const score = row.dataset.score;
+        const label = row.querySelector('.priority-label').textContent;
+        const note = row.querySelector('.priority-note').textContent;
+        content += `Task ${idx + 1}: ${inputs[0].value || "Unnamed Task"}\n`;
+        content += `Revenue: ${inputs[1].value}, Fit: ${inputs[2].value}, TTV: ${inputs[3].value}, Feasibility: ${inputs[4].value}\n`;
+        content += `Validation: ${selects.value}, Score: ${score}\n`;
+        content += `Priority Action: ${label}\nResponse: ${note}\n\n`;
+      });
+      const globalNotes = getNotesContent();
+      content += `📝 General Notes:\n${globalNotes || "No notes added."}\n`;
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Task_Priorities.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addTask;
+  </script>
+</body>
+</html>

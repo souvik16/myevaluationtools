@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opportunity Solution Tree</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f8fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .tree-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .opportunity {
+      background: #fff;
+      border-left: 5px solid #3498db;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .solutions {
+      margin-left: 30px;
+      margin-top: 15px;
+      border-left: 3px dashed #85c1e9;
+      padding-left: 20px;
+    }
+    .solution {
+      background: #eaf2f8;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      cursor: move;
+    }
+    .experiments {
+      margin-left: 30px;
+      margin-top: 10px;
+      border-left: 2px dotted #aed6f1;
+      padding-left: 15px;
+    }
+    .experiment {
+      background: #d6eaf8;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      cursor: move;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+  
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+</style>
+</head>
+<body>
+
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>Opportunity Solution Tree</h1>
+  <div class="tree-container" id="treeContainer"></div>
+  <div class="actions">
+    <button onclick="addOpportunity()">➕ Add Opportunity</button>
+    <button onclick="downloadTree()">📥 Download Summary</button>
+  </div>
+
+  <script>
+    function addOpportunity() {
+      const container = document.getElementById('treeContainer');
+      const oppDiv = document.createElement('div');
+      oppDiv.className = 'opportunity';
+
+      const oppTextarea = document.createElement('textarea');
+      oppTextarea.placeholder = '📌 Describe the opportunity...';
+
+      const solutionContainer = document.createElement('div');
+      solutionContainer.className = 'solutions';
+
+      const addSolutionBtn = document.createElement('button');
+      addSolutionBtn.textContent = '➕ Add Solution';
+      addSolutionBtn.onclick = () => addSolution(solutionContainer);
+
+      oppDiv.appendChild(oppTextarea);
+      oppDiv.appendChild(solutionContainer);
+      oppDiv.appendChild(addSolutionBtn);
+
+      container.appendChild(oppDiv);
+    }
+
+    function addSolution(solutionContainer) {
+      const solDiv = document.createElement('div');
+      solDiv.className = 'solution';
+      solDiv.setAttribute('draggable', 'true');
+      solDiv.ondragstart = e => dragStart(e);
+      solDiv.ondrop = e => drop(e);
+      solDiv.ondragover = e => e.preventDefault();
+
+      const solTextarea = document.createElement('textarea');
+      solTextarea.placeholder = '💡 Describe the solution...';
+
+      const experimentContainer = document.createElement('div');
+      experimentContainer.className = 'experiments';
+
+      const addExperimentBtn = document.createElement('button');
+      addExperimentBtn.textContent = '➕ Add Experiment';
+      addExperimentBtn.onclick = () => addExperiment(experimentContainer);
+
+      solDiv.appendChild(solTextarea);
+      solDiv.appendChild(experimentContainer);
+      solDiv.appendChild(addExperimentBtn);
+
+      solutionContainer.appendChild(solDiv);
+    }
+
+    function addExperiment(experimentContainer) {
+      const expDiv = document.createElement('div');
+      expDiv.className = 'experiment';
+      expDiv.setAttribute('draggable', 'true');
+      expDiv.ondragstart = e => dragStart(e);
+      expDiv.ondrop = e => drop(e);
+      expDiv.ondragover = e => e.preventDefault();
+
+      const expTextarea = document.createElement('textarea');
+      expTextarea.placeholder = '🧪 Describe the experiment...';
+
+      expDiv.appendChild(expTextarea);
+      experimentContainer.appendChild(expDiv);
+    }
+
+    let dragged;
+    function dragStart(e) {
+      dragged = e.target;
+    }
+    function drop(e) {
+      if (dragged !== e.target && dragged.parentNode === e.target.parentNode) {
+        const parent = e.target.parentNode;
+        const children = Array.from(parent.children);
+        const dragIndex = children.indexOf(dragged);
+        const dropIndex = children.indexOf(e.target);
+        if (dragIndex < dropIndex) {
+          parent.insertBefore(dragged, e.target.nextSibling);
+        } else {
+          parent.insertBefore(dragged, e.target);
+        }
+      }
+    }
+
+    function downloadTree() {
+      const opportunities = document.querySelectorAll('.opportunity');
+      let text = 'Opportunity Solution Tree Summary\n\n';
+
+      opportunities.forEach((opp, i) => {
+        const oppText = opp.querySelector('textarea').value.trim();
+        text += `Opportunity ${i + 1}: ${oppText}\n`;
+
+        const solutions = opp.querySelectorAll('.solution');
+        solutions.forEach((sol, j) => {
+          const solText = sol.querySelector('textarea').value.trim();
+          text += `  Solution ${j + 1}: ${solText}\n`;
+
+          const experiments = sol.querySelectorAll('.experiment');
+          experiments.forEach((exp, k) => {
+            const expText = exp.querySelector('textarea').value.trim();
+            text += `    Experiment ${k + 1}: ${expText}\n`;
+          });
+        });
+        text += '\n';
+      });
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Opportunity_Solution_Tree.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addOpportunity;
+  </script>
+
+  <script>
+    const notesBox = document.getElementById('globalNotes');
+    const notesPanel = document.getElementById('notesPanel');
+    const toggleBtn = document.getElementById('notesToggle');
+    toggleBtn.addEventListener('click', () => {
+      notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+    });
+    notesBox.value = '';
+    function getNotesContent() {
+      return notesBox.value.trim();
+    }
+
+    const originalDownload = downloadTree;
+    downloadTree = function() {
+      let notes = getNotesContent();
+      const origBlob = Blob;
+      Blob = function(parts, opts) {
+        parts[0] += "\n\n📝 Notes:\n" + (notes || "No notes added.");
+        return new origBlob(parts, opts);
+      };
+      originalDownload();
+      Blob = origBlob;
+    };
+  </script>
+
+</body>
+</html>

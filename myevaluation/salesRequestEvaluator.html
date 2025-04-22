@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Request Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f7fb;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #2f4050;
+    }
+    input[type="number"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #f1f8ff;
+      border-left: 6px solid #007bff;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sales Request Evaluation</h2>
+
+    <label>Request Title:</label>
+    <textarea id="requestTitle"></textarea>
+
+    <label>Client Impact / Revenue Potential (1–5):</label>
+    <input type="number" id="revenueImpact" min="1" max="5">
+
+    <label>Urgency for Closing Deal (1–5):</label>
+    <input type="number" id="urgency" min="1" max="5">
+
+    <label>Reusability Across Clients (1–5):</label>
+    <input type="number" id="reuse" min="1" max="5">
+
+    <label>Fit with Product Roadmap (1–5):</label>
+    <input type="number" id="roadmap" min="1" max="5">
+
+    <label>Effort to Implement (1–5, lower is better):</label>
+    <input type="number" id="effort" min="1" max="5">
+
+    <label>Client Size (1–5):</label>
+    <input type="number" id="clientSize" min="1" max="5">
+
+    <label>Sales Director Priority (1–5):</label>
+    <input type="number" id="salesPriority" min="1" max="5">
+
+    <button onclick="evaluateRequest()">Evaluate Request</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateRequest() {
+      const revenue = parseInt(document.getElementById('revenueImpact').value) || 0;
+      const urgency = parseInt(document.getElementById('urgency').value) || 0;
+      const reuse = parseInt(document.getElementById('reuse').value) || 0;
+      const roadmap = parseInt(document.getElementById('roadmap').value) || 0;
+      const effort = parseInt(document.getElementById('effort').value) || 0;
+      const clientSize = parseInt(document.getElementById('clientSize').value) || 0;
+      const salesPriority = parseInt(document.getElementById('salesPriority').value) || 0;
+
+      const positiveScore = revenue + urgency + reuse + roadmap + clientSize + salesPriority;
+      const finalScore = positiveScore - effort;
+
+      let priority = '';
+      let message = '';
+
+      if (finalScore >= 22) {
+        priority = '🚀 Must Execute';
+        message = 'Add to immediate delivery plan';
+      } else if (finalScore >= 16) {
+        priority = '✅ Commit This Quarter';
+        message = 'Align with delivery and inform sales';
+      } else if (finalScore >= 10) {
+        priority = '⏳ Consider Later';
+        message = 'Keep in backlog for future fit';
+      } else {
+        priority = '❌ Reject or Reframe';
+        message = 'Not aligned or feasible currently';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Request:</strong> ${document.getElementById('requestTitle').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 30<br>` +
+        `<strong>Recommendation:</strong> ${priority}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

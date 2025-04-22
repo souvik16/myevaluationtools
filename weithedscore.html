@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weighted Impact Scoring</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    #totalScore {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    #notesTab {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #333;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 999;
+    }
+    #notesPanel {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      width: 300px;
+      height: 200px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      display: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="notesTab" ondblclick="toggleNotes()">📝 Notes</div>
+<div id="notesPanel">
+  <textarea placeholder="Enter your notes here..."></textarea>
+</div>
+
+<h1>Weighted Impact Scoring</h1>
+<table id="scoringTable">
+  <thead>
+    <tr>
+      <th>Criteria</th>
+      <th>Weight (0-1)</th>
+      <th>Score (1-10)</th>
+      <th>Weighted Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Revenue Potential</td>
+      <td><input type="number" step="0.1" value="0.3" onchange="calculateScore()"></td>
+      <td><input type="number" min="1" max="10" value="8" onchange="calculateScore()"></td>
+      <td class="weighted"></td>
+    </tr>
+    <tr>
+      <td>Customer Value</td>
+      <td><input type="number" step="0.1" value="0.4" onchange="calculateScore()"></td>
+      <td><input type="number" min="1" max="10" value="7" onchange="calculateScore()"></td>
+      <td class="weighted"></td>
+    </tr>
+    <tr>
+      <td>Strategic Alignment</td>
+      <td><input type="number" step="0.1" value="0.3" onchange="calculateScore()"></td>
+      <td><input type="number" min="1" max="10" value="9" onchange="calculateScore()"></td>
+      <td class="weighted"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="totalScore">Total Weighted Score: <span id="scoreValue">0</span></div>
+
+<script>
+function calculateScore() {
+  let rows = document.querySelectorAll('#scoringTable tbody tr');
+  let total = 0;
+
+  rows.forEach(row => {
+    let weight = parseFloat(row.cells[1].querySelector('input').value) || 0;
+    let score = parseFloat(row.cells[2].querySelector('input').value) || 0;
+    let weighted = weight * score;
+    row.cells[3].innerText = weighted.toFixed(2);
+    total += weighted;
+  });
+
+  document.getElementById('scoreValue').innerText = total.toFixed(2);
+}
+
+function toggleNotes() {
+  const panel = document.getElementById('notesPanel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+}
+
+// Initial calculation
+calculateScore();
+</script>
+
+</body>
+</html>

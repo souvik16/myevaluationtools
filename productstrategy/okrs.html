@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product OKR Framework</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fb;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .okr-card {
+      background: #fff;
+      border-left: 5px solid #3498db;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .objective {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1a5276;
+    }
+    .key-results {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+    .key-result {
+      background: #eaf2f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 8px 0;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+    .actions {
+      text-align: center;
+    }
+
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+</style>
+</head>
+<body>
+
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>Product OKRs</h1>
+  <p>Define your product goals and measurable outcomes (Objectives and Key Results)</p>
+
+  <div class="container" id="okrContainer"></div>
+
+  <div class="actions">
+    <button onclick="addOKR()">➕ Add OKR</button>
+    <button onclick="downloadOKRs()">📥 Download OKR Summary</button>
+  </div>
+
+  <script>
+    function addOKR() {
+      const container = document.getElementById('okrContainer');
+      const okrCard = document.createElement('div');
+      okrCard.className = 'okr-card';
+
+      const objInput = document.createElement('input');
+      objInput.placeholder = '🎯 Objective (e.g., Improve product onboarding experience)';
+      objInput.className = 'objective';
+
+      const krList = document.createElement('div');
+      krList.className = 'key-results';
+
+      const addKRBtn = document.createElement('button');
+      addKRBtn.textContent = '➕ Add Key Result';
+      addKRBtn.onclick = () => addKeyResult(krList);
+
+      okrCard.appendChild(objInput);
+      okrCard.appendChild(krList);
+      okrCard.appendChild(addKRBtn);
+      container.appendChild(okrCard);
+    }
+
+    function addKeyResult(krList) {
+      const krItem = document.createElement('div');
+      krItem.className = 'key-result';
+      const input = document.createElement('textarea');
+      input.placeholder = '📌 Key Result (e.g., Increase activation rate from 25% to 40%)';
+      krItem.appendChild(input);
+      krList.appendChild(krItem);
+    }
+
+    function downloadOKRs() {
+      const cards = document.querySelectorAll('.okr-card');
+      let summary = 'Product OKRs Summary\n\n';
+
+      cards.forEach((card, i) => {
+        const obj = card.querySelector('input').value.trim();
+        summary += `Objective ${i + 1}: ${obj}\n`;
+        const krs = card.querySelectorAll('textarea');
+        krs.forEach((kr, j) => {
+          summary += `  KR ${j + 1}: ${kr.value.trim()}\n`;
+        });
+        summary += '\n';
+      });
+
+      const blob = new Blob([summary], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Product_OKRs.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addOKR;
+  </script>
+
+  <script>
+    const notesBox = document.getElementById('globalNotes');
+    const notesPanel = document.getElementById('notesPanel');
+    const toggleBtn = document.getElementById('notesToggle');
+    toggleBtn.addEventListener('click', () => {
+      notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+    });
+    notesBox.value = '';
+    function getNotesContent() {
+      return notesBox.value.trim();
+    }
+
+    const originalDownload = downloadOKRs;
+    downloadOKRs = function() {
+      let notes = getNotesContent();
+      const origBlob = Blob;
+      Blob = function(parts, opts) {
+        parts[0] += "\n\n📝 Notes:\n" + (notes || "No notes added.");
+        return new origBlob(parts, opts);
+      };
+      originalDownload();
+      Blob = origBlob;
+    };
+  </script>
+
+</body>
+</html>

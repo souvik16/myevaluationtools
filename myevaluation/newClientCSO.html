@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partial-Fit Sales Lead Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f5f8;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 620px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #34495e;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #34495e;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #2c3e50;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #f0f2f5;
+      border-left: 6px solid #34495e;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Partial-Fit Sales Lead Evaluation</h2>
+
+    <label>Lead Summary / Client Name:</label>
+    <textarea id="leadSummary"></textarea>
+
+    <label>Feature Reusability (1–5):</label>
+    <input type="number" id="reusability" min="1" max="5">
+
+    <label>Deal Size & Revenue Impact (1–5):</label>
+    <input type="number" id="revenue" min="1" max="5">
+
+    <label>Engineering Complexity (1–5):</label>
+    <input type="number" id="complexity" min="1" max="5">
+
+    <label>Strategic Market Entry Potential (1–5):</label>
+    <input type="number" id="marketEntry" min="1" max="5">
+
+    <label>Configuration vs Customization (1–5):</label>
+    <input type="number" id="customization" min="1" max="5">
+
+    <label>Support & Maintenance Overhead (1–5):</label>
+    <input type="number" id="support" min="1" max="5">
+
+    <label>Contract Commitment / Duration (1–5):</label>
+    <input type="number" id="contract" min="1" max="5">
+
+    <label>Alignment with Long-Term Roadmap (1–5):</label>
+    <input type="number" id="roadmap" min="1" max="5">
+
+    <button onclick="evaluateLead()">Evaluate Lead</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateLead() {
+      const scores = [
+        'reusability', 'revenue', 'complexity', 'marketEntry',
+        'customization', 'support', 'contract', 'roadmap'
+      ].map(id => parseInt(document.getElementById(id).value) || 0);
+
+      const totalScore = scores.reduce((sum, val) => sum + val, 0);
+
+      let recommendation = '';
+      let message = '';
+
+      if (totalScore >= 30) {
+        recommendation = '🚀 Pursue';
+        message = 'Proceed with scope control; strategically valuable';
+      } else if (totalScore >= 22) {
+        recommendation = '✅ Conditional Fit';
+        message = 'Consider pilot or limited POC';
+      } else if (totalScore >= 15) {
+        recommendation = '⏳ Park';
+        message = 'Track, revisit if similar use cases emerge';
+      } else {
+        recommendation = '❌ Pass';
+        message = 'Not a good fit; decline respectfully';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Lead:</strong> ${document.getElementById('leadSummary').value}<br>` +
+        `<strong>Total Score:</strong> ${totalScore} / 40<br>` +
+        `<strong>Recommendation:</strong> ${recommendation}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

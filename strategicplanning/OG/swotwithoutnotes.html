@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWOT Analysis Tool</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      background: linear-gradient(135deg, #f0f4f7, #d9e2ec);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 40px;
+      color: #333;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .cell {
+      border-radius: 12px;
+      padding: 20px;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease-in-out;
+    }
+    .cell:hover {
+      transform: scale(1.02);
+    }
+    #strengths-cell {
+      background-color: #28a745;
+    }
+    #weaknesses-cell {
+      background-color: #dc3545;
+    }
+    #opportunities-cell {
+      background-color: #ffc107;
+      color: #333;
+    }
+    #threats-cell {
+      background-color: #17a2b8;
+    }
+    textarea {
+      width: 100%;
+      height: 140px;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: none;
+      resize: vertical;
+      font-family: inherit;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>SWOT Analysis Grid</h1>
+  <div class="grid">
+    <div class="cell" id="strengths-cell">
+      <h2>Strengths</h2>
+      <textarea id="strengths" placeholder="Enter your internal strengths..."></textarea>
+    </div>
+    <div class="cell" id="weaknesses-cell">
+      <h2>Weaknesses</h2>
+      <textarea id="weaknesses" placeholder="Enter your internal weaknesses..."></textarea>
+    </div>
+    <div class="cell" id="opportunities-cell">
+      <h2>Opportunities</h2>
+      <textarea id="opportunities" placeholder="Enter your external opportunities..."></textarea>
+    </div>
+    <div class="cell" id="threats-cell">
+      <h2>Threats</h2>
+      <textarea id="threats" placeholder="Enter your external threats..."></textarea>
+    </div>
+  </div>
+  <button onclick="downloadSWOT()">📥 Download SWOT Analysis</button>
+
+  <script>
+    function downloadSWOT() {
+      const strengths = document.getElementById('strengths').value.trim();
+      const weaknesses = document.getElementById('weaknesses').value.trim();
+      const opportunities = document.getElementById('opportunities').value.trim();
+      const threats = document.getElementById('threats').value.trim();
+
+      const content = `SWOT Analysis\n\nStrengths:\n${strengths}\n\nWeaknesses:\n${weaknesses}\n\nOpportunities:\n${opportunities}\n\nThreats:\n${threats}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'SWOT_Analysis.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

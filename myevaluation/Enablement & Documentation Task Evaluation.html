@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enablement Task Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f6fafb;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #34495e;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #1abc9c;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #16a085;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #e6f9f5;
+      border-left: 6px solid #1abc9c;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Enablement / Documentation Task Evaluation</h2>
+
+    <label>Task Summary:</label>
+    <textarea id="taskSummary"></textarea>
+
+    <label>Urgency (1–5):</label>
+    <input type="number" id="urgency" min="1" max="5">
+
+    <label>Sales/CS Team Dependency (1–5):</label>
+    <input type="number" id="teamDependency" min="1" max="5">
+
+    <label>Impact on Client Success / Sales Conversion (1–5):</label>
+    <input type="number" id="clientImpact" min="1" max="5">
+
+    <label>Reusability for Future Clients (1–5):</label>
+    <input type="number" id="reusability" min="1" max="5">
+
+    <label>Time to Create (1–5, lower is better):</label>
+    <input type="number" id="creationTime" min="1" max="5">
+
+    <label>Clarity Gap it Solves (1–5):</label>
+    <input type="number" id="clarityGap" min="1" max="5">
+
+    <button onclick="evaluateEnablement()">Evaluate Task</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateEnablement() {
+      const urgency = parseInt(document.getElementById('urgency').value) || 0;
+      const teamDependency = parseInt(document.getElementById('teamDependency').value) || 0;
+      const clientImpact = parseInt(document.getElementById('clientImpact').value) || 0;
+      const reusability = parseInt(document.getElementById('reusability').value) || 0;
+      const clarityGap = parseInt(document.getElementById('clarityGap').value) || 0;
+      const creationTime = parseInt(document.getElementById('creationTime').value) || 0;
+
+      const positiveScore = urgency + teamDependency + clientImpact + reusability + clarityGap;
+      const finalScore = positiveScore - creationTime;
+
+      let recommendation = '';
+      let message = '';
+
+      if (finalScore >= 18) {
+        recommendation = '🚀 Must Do';
+        message = 'Create this as top priority for enablement';
+      } else if (finalScore >= 13) {
+        recommendation = '✅ Recommended';
+        message = 'Align it with near-term enablement plan';
+      } else if (finalScore >= 8) {
+        recommendation = '⏳ Optional';
+        message = '

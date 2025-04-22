@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobs To Be Done (JTBD)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fb;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .container {
+      max-width: 100%;
+      overflow-x: auto;
+      margin: auto;
+    }
+    details {
+      background: #ffffff;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 10px;
+    }
+    summary {
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px;
+      color: #2c3e50;
+    }
+    .jtbd-section {
+      display: flex;
+      gap: 20px;
+      padding: 0 20px 20px 20px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    .input-group {
+      min-width: 220px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      text-align: left;
+      font-weight: bold;
+      color: #1a5276;
+      margin-bottom: 4px;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #f9fcff;
+      resize: vertical;
+    }
+    .actions {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jobs To Be Done (JTBD)</h1>
+  <p class="description">Capture multiple JTBDs. Expand each entry to fill in job details horizontally.</p>
+
+  <div id="jtbdContainer" class="container"></div>
+
+  <div class="actions">
+    <button onclick="addJTBD()">➕ Add JTBD</button>
+    <button onclick="downloadJTBD()">📥 Download All JTBDs</button>
+  </div>
+
+  <script>
+    function addJTBD() {
+      const container = document.getElementById('jtbdContainer');
+      const jtbd = document.createElement('details');
+      jtbd.open = true;
+      jtbd.innerHTML = `
+        <summary>New JTBD</summary>
+        <div class="jtbd-section">
+          <div class="input-group">
+            <label>Job Statement</label>
+            <textarea placeholder="When [situation], I want to [motivation], so I can [expected outcome]..."></textarea>
+          </div>
+          <div class="input-group">
+            <label>Context / Situation</label>
+            <textarea placeholder="Describe when and where this job arises..."></textarea>
+          </div>
+          <div class="input-group">
+            <label>Struggles / Pain Points</label>
+            <textarea placeholder="List frustrations with current solutions or workflows..."></textarea>
+          </div>
+          <div class="input-group">
+            <label>Desired Outcome / Success</label>
+            <textarea placeholder="What does success look like for the user?"></textarea>
+          </div>
+        </div>`;
+      container.appendChild(jtbd);
+    }
+
+    function downloadJTBD() {
+      const entries = document.querySelectorAll('#jtbdContainer details');
+      let output = 'Jobs To Be Done (JTBD) Summary\n\n';
+
+      entries.forEach((entry, i) => {
+        const fields = entry.querySelectorAll('textarea');
+        output += `JTBD #${i + 1}\n`;
+        output += `Job Statement: ${fields[0].value}\n`;
+        output += `Context: ${fields[1].value}\n`;
+        output += `Struggles: ${fields[2].value}\n`;
+        output += `Outcome: ${fields[3].value}\n\n`;
+      });
+
+      const blob = new Blob([output], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'JTBD_Summary.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = addJTBD;
+  </script>
+</body>
+</html>

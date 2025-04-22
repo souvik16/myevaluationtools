@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue Ocean Strategy Canvas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef6fb;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, auto);
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .canvas-cell {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #3498db;
+      transition: transform 0.2s;
+    }
+    .canvas-cell:hover {
+      transform: scale(1.02);
+    }
+    .canvas-cell h2 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #2c3e50;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+      background-color: #f9fcff;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Blue Ocean Strategy Canvas</h1>
+  <p class="description">Use the 4-action framework to identify how you can shift from red ocean competition to blue ocean innovation.</p>
+  <div class="canvas-grid">
+    <div class="canvas-cell">
+      <h2>Eliminate</h2>
+      <textarea id="eliminate" placeholder="What industry factors can be eliminated that are taken for granted?"></textarea>
+    </div>
+    <div class="canvas-cell">
+      <h2>Reduce</h2>
+      <textarea id="reduce" placeholder="What factors can be reduced well below the industry standard?"></textarea>
+    </div>
+    <div class="canvas-cell">
+      <h2>Raise</h2>
+      <textarea id="raise" placeholder="What factors should be raised well above the industry standard?"></textarea>
+    </div>
+    <div class="canvas-cell">
+      <h2>Create</h2>
+      <textarea id="create" placeholder="What new factors can be created that the industry has never offered?"></textarea>
+    </div>
+  </div>
+  <button onclick="downloadCanvas()">📥 Download Strategy</button>
+
+  <script>
+    function downloadCanvas() {
+      const eliminate = document.getElementById('eliminate').value.trim();
+      const reduce = document.getElementById('reduce').value.trim();
+      const raise = document.getElementById('raise').value.trim();
+      const create = document.getElementById('create').value.trim();
+
+      const content = `Blue Ocean Strategy\n\nEliminate:\n${eliminate}\n\nReduce:\n${reduce}\n\nRaise:\n${raise}\n\nCreate:\n${create}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Blue_Ocean_Strategy.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
