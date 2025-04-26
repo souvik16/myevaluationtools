@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature Enhancement Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f6f9fc;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #34495e;
+    }
+    input[type="number"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+      border-left: 6px solid #28a745;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Feature / Enhancement Evaluation</h2>
+
+    <label>Feature Name:</label>
+    <textarea id="featureName"></textarea>
+
+    <label>Customer Impact (1–5):</label>
+    <input type="number" id="customerImpact" min="1" max="5">
+
+    <label>Revenue Contribution Potential (1–5):</label>
+    <input type="number" id="revenueImpact" min="1" max="5">
+
+    <label>Alignment to Roadmap (1–5):</label>
+    <input type="number" id="roadmapFit" min="1" max="5">
+
+    <label>Urgency (1–5):</label>
+    <input type="number" id="urgency" min="1" max="5">
+
+    <label>Implementation Complexity (1–5, lower is better):</label>
+    <input type="number" id="complexity" min="1" max="5">
+
+    <label>Cross-Team Dependency (1–5, lower is better):</label>
+    <input type="number" id="dependency" min="1" max="5">
+
+    <label>Innovation Value (1–5):</label>
+    <input type="number" id="innovation" min="1" max="5">
+
+    <label>Market Differentiation (1–5):</label>
+    <input type="number" id="differentiation" min="1" max="5">
+
+    <button onclick="evaluateFeature()">Evaluate Feature</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateFeature() {
+      const customerImpact = parseInt(document.getElementById('customerImpact').value) || 0;
+      const revenueImpact = parseInt(document.getElementById('revenueImpact').value) || 0;
+      const roadmapFit = parseInt(document.getElementById('roadmapFit').value) || 0;
+      const urgency = parseInt(document.getElementById('urgency').value) || 0;
+      const complexity = parseInt(document.getElementById('complexity').value) || 0;
+      const dependency = parseInt(document.getElementById('dependency').value) || 0;
+      const innovation = parseInt(document.getElementById('innovation').value) || 0;
+      const differentiation = parseInt(document.getElementById('differentiation').value) || 0;
+
+      const positiveScore = customerImpact + revenueImpact + roadmapFit + urgency + innovation + differentiation;
+      const negativeScore = complexity + dependency;
+      const finalScore = positiveScore - negativeScore;
+
+      let recommendation = '';
+      let message = '';
+
+      if (finalScore >= 20) {
+        recommendation = '🚀 High Priority';
+        message = 'Plan for next release sprint';
+      } else if (finalScore >= 15) {
+        recommendation = '✅ Medium Priority';
+        message = 'Add to backlog with mid-term visibility';
+      } else if (finalScore >= 10) {
+        recommendation = '⏳ Low Priority';
+        message = 'Consider if extra bandwidth available';
+      } else {
+        recommendation = '❌ Deprioritized';
+        message = 'Not worth investing at this point';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Feature:</strong> ${document.getElementById('featureName').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 30<br>` +
+        `<strong>Recommendation:</strong> ${recommendation}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

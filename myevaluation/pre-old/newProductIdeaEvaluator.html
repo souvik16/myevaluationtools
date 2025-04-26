@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Product Idea Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef3f8;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #2f4050;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #17a2b8;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #138496;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #f0f9ff;
+      border-left: 6px solid #17a2b8;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>New Product Idea Evaluation</h2>
+
+    <label>Idea Name / Summary:</label>
+    <textarea id="ideaSummary"></textarea>
+
+    <label>Market Size Potential (1–5):</label>
+    <input type="number" id="marketSize" min="1" max="5">
+
+    <label>Urgency of Problem (1–5):</label>
+    <input type="number" id="urgency" min="1" max="5">
+
+    <label>Competitive Gap (1–5):</label>
+    <input type="number" id="gap" min="1" max="5">
+
+    <label>Strategic Alignment (1–5):</label>
+    <input type="number" id="alignment" min="1" max="5">
+
+    <label>Ease of Validation / MVP Feasibility (1–5):</label>
+    <input type="number" id="validation" min="1" max="5">
+
+    <label>Internal Excitement / Support (1–5):</label>
+    <input type="number" id="support" min="1" max="5">
+
+    <label>Estimated Time to MVP (1–5, lower is better):</label>
+    <input type="number" id="timeToMvp" min="1" max="5">
+
+    <button onclick="evaluateIdea()">Evaluate Idea</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateIdea() {
+      const marketSize = parseInt(document.getElementById('marketSize').value) || 0;
+      const urgency = parseInt(document.getElementById('urgency').value) || 0;
+      const gap = parseInt(document.getElementById('gap').value) || 0;
+      const alignment = parseInt(document.getElementById('alignment').value) || 0;
+      const validation = parseInt(document.getElementById('validation').value) || 0;
+      const support = parseInt(document.getElementById('support').value) || 0;
+      const timeToMvp = parseInt(document.getElementById('timeToMvp').value) || 0;
+
+      const positiveScore = marketSize + urgency + gap + alignment + validation + support;
+      const finalScore = positiveScore - timeToMvp;
+
+      let priority = '';
+      let message = '';
+
+      if (finalScore >= 22) {
+        priority = '🚀 Pursue Immediately';
+        message = 'Plan discovery and MVP sprint next';
+      } else if (finalScore >= 16) {
+        priority = '✅ Validate Soon';
+        message = 'Include in market validation pipeline';
+      } else if (finalScore >= 10) {
+        priority = '⏳ Watchlist';
+        message = 'Track demand, revisit later';
+      } else {
+        priority = '❌ Not Now';
+        message = 'Low strategic or market value currently';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Idea:</strong> ${document.getElementById('ideaSummary').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 30<br>` +
+        `<strong>Recommendation:</strong> ${priority}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

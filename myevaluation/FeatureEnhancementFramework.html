@@ -10,9 +10,10 @@
       background: #f6f9fc;
       margin: 0;
       padding: 40px;
+      position: relative;
     }
     .container {
-      max-width: 600px;
+      max-width: 1200px;
       margin: auto;
       background: #ffffff;
       padding: 30px;
@@ -23,48 +24,102 @@
       text-align: center;
       color: #2c3e50;
     }
+    .feature-entry {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #ff5c5c;
+      cursor: pointer;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+      justify-content: space-between;
+    }
+    .field {
+      flex: 1 1 calc(20% - 10px);
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
     label {
       font-weight: 600;
-      margin-top: 12px;
-      display: block;
+      margin-bottom: 6px;
       color: #34495e;
+      font-size: 13px;
     }
-    input[type="number"], select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+    input[type="number"], textarea {
+      padding: 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
       font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
     textarea {
-      height: 60px;
+      height: 36px;
+      resize: none;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
     }
     button {
       background-color: #28a745;
       color: white;
-      padding: 12px;
+      padding: 10px 20px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      width: 100%;
-      font-size: 16px;
-      margin-top: 20px;
+      font-size: 14px;
     }
     button:hover {
       background-color: #218838;
     }
     .result {
-      margin-top: 20px;
-      padding: 15px;
+      margin-top: 10px;
+      padding: 12px;
       border-radius: 6px;
-      background-color: #f9f9f9;
+      font-size: 14px;
       border-left: 6px solid #28a745;
+      background-color: #f9f9f9;
     }
-    .result strong {
-      display: block;
-      margin-bottom: 6px;
+    .high { background-color: #d4edda; }
+    .medium { background-color: #fff3cd; }
+    .low { background-color: #ffeeba; }
+    .deprioritized { background-color: #f8d7da; }
+
+    #backToTop {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      padding: 15px 18px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #backToTop:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -72,48 +127,84 @@
   <div class="container">
     <h2>Feature / Enhancement Evaluation</h2>
 
-    <label>Feature Name:</label>
-    <textarea id="featureName"></textarea>
+    <div class="button-group">
+      <button onclick="addFeatureEntry()">➕ Add Feature</button>
+      <button onclick="sortFeatures()">🔽 Sort by Score</button>
+      <button onclick="downloadCSV()">📥 Download CSV</button>
+    </div>
 
-    <label>Customer Impact (1–5):</label>
-    <input type="number" id="customerImpact" min="1" max="5">
-
-    <label>Revenue Contribution Potential (1–5):</label>
-    <input type="number" id="revenueImpact" min="1" max="5">
-
-    <label>Alignment to Roadmap (1–5):</label>
-    <input type="number" id="roadmapFit" min="1" max="5">
-
-    <label>Urgency (1–5):</label>
-    <input type="number" id="urgency" min="1" max="5">
-
-    <label>Implementation Complexity (1–5, lower is better):</label>
-    <input type="number" id="complexity" min="1" max="5">
-
-    <label>Cross-Team Dependency (1–5, lower is better):</label>
-    <input type="number" id="dependency" min="1" max="5">
-
-    <label>Innovation Value (1–5):</label>
-    <input type="number" id="innovation" min="1" max="5">
-
-    <label>Market Differentiation (1–5):</label>
-    <input type="number" id="differentiation" min="1" max="5">
-
-    <button onclick="evaluateFeature()">Evaluate Feature</button>
-
-    <div class="result" id="result"></div>
+    <div id="featureList"></div>
   </div>
 
+  <button id="backToTop" onclick="scrollToTop()">🔝</button>
+
   <script>
-    function evaluateFeature() {
-      const customerImpact = parseInt(document.getElementById('customerImpact').value) || 0;
-      const revenueImpact = parseInt(document.getElementById('revenueImpact').value) || 0;
-      const roadmapFit = parseInt(document.getElementById('roadmapFit').value) || 0;
-      const urgency = parseInt(document.getElementById('urgency').value) || 0;
-      const complexity = parseInt(document.getElementById('complexity').value) || 0;
-      const dependency = parseInt(document.getElementById('dependency').value) || 0;
-      const innovation = parseInt(document.getElementById('innovation').value) || 0;
-      const differentiation = parseInt(document.getElementById('differentiation').value) || 0;
+    let featureCount = 0;
+    const featureData = [];
+
+    function addFeatureEntry() {
+      featureCount++;
+      const featureDiv = document.createElement('div');
+      featureDiv.className = 'feature-entry';
+      featureDiv.setAttribute('data-id', featureCount);
+      featureDiv.innerHTML = `
+        <button class="remove-btn" onclick="removeFeatureEntry(this)">&times;</button>
+        <div class="row">
+          <div class="field">
+            <label>Feature Name:</label>
+            <textarea id="featureName-${featureCount}" oninput="evaluateFeature(${featureCount})"></textarea>
+          </div>
+          <div class="field">
+            <label>Customer Impact (1–5):</label>
+            <input type="number" id="customerImpact-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Revenue Potential (1–5):</label>
+            <input type="number" id="revenueImpact-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Alignment to Roadmap (1–5):</label>
+            <input type="number" id="roadmapFit-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Urgency (1–5):</label>
+            <input type="number" id="urgency-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Implementation Complexity (1–5, lower):</label>
+            <input type="number" id="complexity-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Cross-Team Dependency (1–5, lower):</label>
+            <input type="number" id="dependency-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Innovation Value (1–5):</label>
+            <input type="number" id="innovation-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+          <div class="field">
+            <label>Market Differentiation (1–5):</label>
+            <input type="number" id="differentiation-${featureCount}" min="1" max="5" oninput="evaluateFeature(${featureCount})">
+          </div>
+        </div>
+        <div class="result" id="result-${featureCount}"></div>
+      `;
+      document.getElementById('featureList').appendChild(featureDiv);
+      evaluateFeature(featureCount);
+    }
+
+    function evaluateFeature(id) {
+      const featureName = document.getElementById(`featureName-${id}`).value.trim();
+      const customerImpact = parseInt(document.getElementById(`customerImpact-${id}`).value) || 0;
+      const revenueImpact = parseInt(document.getElementById(`revenueImpact-${id}`).value) || 0;
+      const roadmapFit = parseInt(document.getElementById(`roadmapFit-${id}`).value) || 0;
+      const urgency = parseInt(document.getElementById(`urgency-${id}`).value) || 0;
+      const complexity = parseInt(document.getElementById(`complexity-${id}`).value) || 0;
+      const dependency = parseInt(document.getElementById(`dependency-${id}`).value) || 0;
+      const innovation = parseInt(document.getElementById(`innovation-${id}`).value) || 0;
+      const differentiation = parseInt(document.getElementById(`differentiation-${id}`).value) || 0;
 
       const positiveScore = customerImpact + revenueImpact + roadmapFit + urgency + innovation + differentiation;
       const negativeScore = complexity + dependency;
@@ -121,27 +212,77 @@
 
       let recommendation = '';
       let message = '';
+      let colorClass = '';
 
       if (finalScore >= 20) {
         recommendation = '🚀 High Priority';
         message = 'Plan for next release sprint';
+        colorClass = 'high';
       } else if (finalScore >= 15) {
         recommendation = '✅ Medium Priority';
         message = 'Add to backlog with mid-term visibility';
+        colorClass = 'medium';
       } else if (finalScore >= 10) {
         recommendation = '⏳ Low Priority';
         message = 'Consider if extra bandwidth available';
+        colorClass = 'low';
       } else {
         recommendation = '❌ Deprioritized';
         message = 'Not worth investing at this point';
+        colorClass = 'deprioritized';
       }
 
-      document.getElementById('result').innerHTML =
-        `<strong>Feature:</strong> ${document.getElementById('featureName').value}<br>` +
-        `<strong>Score:</strong> ${finalScore} / 30<br>` +
-        `<strong>Recommendation:</strong> ${recommendation}<br>` +
-        `<strong>Message:</strong> ${message}`;
+      const resultDiv = document.getElementById(`result-${id}`);
+      resultDiv.className = `result ${colorClass}`;
+      resultDiv.innerHTML = `
+        <strong>Feature:</strong> ${featureName}<br>
+        <strong>Score:</strong> ${finalScore} / 30<br>
+        <strong>Recommendation:</strong> ${recommendation}<br>
+        <strong>Message:</strong> ${message}
+      `;
+
+      featureData[id] = { featureName, customerImpact, revenueImpact, roadmapFit, urgency, complexity, dependency, innovation, differentiation, finalScore, recommendation, message };
     }
+
+    function removeFeatureEntry(button) {
+      button.closest('.feature-entry').remove();
+    }
+
+    function sortFeatures() {
+      const featureList = document.getElementById('featureList');
+      const features = Array.from(featureList.children);
+      features.sort((a, b) => {
+        const idA = a.getAttribute('data-id');
+        const idB = b.getAttribute('data-id');
+        return (featureData[idB]?.finalScore || 0) - (featureData[idA]?.finalScore || 0);
+      });
+      featureList.innerHTML = '';
+      features.forEach(feature => featureList.appendChild(feature));
+    }
+
+    function downloadCSV() {
+      let csvContent = "Feature Name,Customer Impact,Revenue Contribution,Alignment to Roadmap,Urgency,Implementation Complexity,Cross-Team Dependency,Innovation Value,Market Differentiation,Final Score,Recommendation,Message\n";
+      featureData.forEach(entry => {
+        if (entry) {
+          csvContent += `"${entry.featureName}",${entry.customerImpact},${entry.revenueImpact},${entry.roadmapFit},${entry.urgency},${entry.complexity},${entry.dependency},${entry.innovation},${entry.differentiation},${entry.finalScore},"${entry.recommendation}","${entry.message}"\n`;
+        }
+      });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'feature_evaluation.csv';
+      link.click();
+    }
+
+    window.onscroll = function() {
+      document.getElementById('backToTop').style.display = (document.documentElement.scrollTop > 300) ? 'block' : 'none';
+    };
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onload = addFeatureEntry;
   </script>
 </body>
 </html>

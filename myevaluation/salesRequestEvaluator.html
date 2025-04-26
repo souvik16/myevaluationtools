@@ -1,142 +1,171 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales Request Evaluator</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f3f7fb;
-      margin: 0;
-      padding: 40px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    label {
-      font-weight: 600;
-      margin-top: 12px;
-      display: block;
-      color: #2f4050;
-    }
-    input[type="number"], select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-    textarea {
-      height: 60px;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 16px;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 6px;
-      background-color: #f1f8ff;
-      border-left: 6px solid #007bff;
-    }
-    .result strong {
-      display: block;
-      margin-bottom: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Request Evaluator</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #f6f9fc; margin: 0; padding: 40px; }
+.container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.08); }
+h2 { text-align: center; color: #2c3e50; }
+.request-entry { border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; position: relative; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; justify-content: space-between; }
+.field { flex: 1 1 calc(20% - 10px); display: flex; flex-direction: column; min-width: 150px; }
+label { font-weight: 600; margin-bottom: 6px; color: #34495e; font-size: 13px; }
+input[type="number"], textarea { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; box-sizing: border-box; }
+textarea { height: 36px; resize: none; }
+.button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.3s ease; }
+button:hover { background-color: #218838; }
+.result { margin-top: 10px; padding: 12px; border-radius: 6px; font-size: 14px; border-left: 6px solid #007bff; background-color: #f1f7fc; }
+#backToTop { display: none; position: fixed; bottom: 30px; right: 30px; background: #007bff; color: white; border: none; border-radius: 50%; padding: 15px 18px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+#backToTop:hover { background-color: #0056b3; }
+@media (max-width: 768px) { .row { flex-direction: column; } .field { flex: 1 1 100%; } .button-group { flex-direction: column; align-items: center; } }
+
+.remove-btn  {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.remove-btn:hover {
+  background-color: #c62828;
+}
+
+
+.remove-btn  {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.request-entry:hover .remove-btn,
+.idea-entry:hover .remove-btn  {
+  color: #e74c3c;
+}
+
+
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ff5c5c;
+  cursor: pointer;
+}
+
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>Sales Request Evaluation</h2>
+<div class="container">
+<h2>Sales Request Evaluator</h2>
+<div class="button-group">
+<button onclick="addRequestEntry()">➕ Add Request</button>
+<button onclick="sortRequests()">🔽 Sort by Score</button>
+<button onclick="downloadCSV()">📥 Download CSV</button>
+</div>
+<div id="requestList"></div>
+</div>
+<button id="backToTop" onclick="scrollToTop()">🔝</button>
+<script>
+let requestCount = 0;
+function addRequestEntry(existingData = null) {
+requestCount++;
+const div = document.createElement('div');
+div.className = 'request-entry';
+div.innerHTML = `
+<button class="remove-btn" onclick="removeEntry(this)">×</button>
+<div class="row">
+<div class="field"><label>Request Title:</label><textarea>${existingData ? existingData.title : ''}</textarea></div>
+<div class="field"><label>Revenue Impact (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.revenue : ''}"></div>
+<div class="field"><label>Urgency (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.urgency : ''}"></div>
+<div class="field"><label>Reusability (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.reuse : ''}"></div>
+<div class="field"><label>Roadmap Fit (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.roadmap : ''}"></div>
+</div>
+<div class="row">
+<div class="field"><label>Effort to Implement (1–5, lower better):</label><input type="number" min="1" max="5" value="${existingData ? existingData.effort : ''}"></div>
+<div class="field"><label>Client Size (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.clientSize : ''}"></div>
+<div class="field"><label>Sales Director Priority (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.priority : ''}"></div>
+</div>
+<div class="result"><strong>Request:</strong><br><strong>Score:</strong> <span class="score">0</span> / 40<br><strong>Recommendation:</strong> <span class="rec"></span><br><strong>Message:</strong> <span class="msg"></span></div>
+`;
+document.getElementById('requestList').appendChild(div);
+Array.from(div.querySelectorAll('input, textarea')).forEach(el => { el.addEventListener('input', () => evaluate(div)); });
+evaluate(div);
+}
+function evaluate(div) {
+const inputs = div.querySelectorAll('input');
+const score = Array.from(inputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
+div.querySelector('.score').innerText = score;
+const rec = div.querySelector('.rec');
+const box = div.querySelector('.result');
+if (score >= 30) { box.style.background = '#d4edda'; box.style.borderLeft = '6px solid #2e7d32'; }
+else if (score >= 24) { box.style.background = '#fff8e1'; box.style.borderLeft = '6px solid #fbc02d'; }
+else if (score >= 18) { box.style.background = '#fff3e0'; box.style.borderLeft = '6px solid #fb8c00'; }
+else { box.style.background = '#ffebee'; box.style.borderLeft = '6px solid #e53935'; }
+const msg = div.querySelector('.msg');
+if (score >= 30) { rec.innerText = '🚀 Must Execute'; msg.innerText = 'Add to immediate delivery plan'; }
+else if (score >= 24) { rec.innerText = '✅ Commit'; msg.innerText = 'Prioritize in current roadmap'; }
+else if (score >= 18) { rec.innerText = '⏳ Consider'; msg.innerText = 'Evaluate after higher priority items'; }
+else { rec.innerText = '❌ Reject'; msg.innerText = 'Do not pursue at this time'; }
+}
+function sortRequests() {
+const requestList = document.getElementById('requestList');
+const requests = Array.from(requestList.children);
+requests.sort((a, b) => {
+const aScore = parseInt(a.querySelector('.score').innerText) || 0;
+const bScore = parseInt(b.querySelector('.score').innerText) || 0;
+return bScore - aScore;
+});
+requestList.innerHTML = '';
+requests.forEach(req => requestList.appendChild(req));
+}
+function downloadCSV() {
+let csv = "Request Title,Revenue Impact,Urgency,Reusability,Roadmap Fit,Effort to Implement,Client Size,Sales Director Priority,Score,Recommendation,Message\n";
+const requests = document.querySelectorAll('.request-entry');
+requests.forEach(div => {
+const title = div.querySelector('textarea').value.replace(/,/g, ';');
+const inputs = div.querySelectorAll('input');
+const values = Array.from(inputs).map(input => parseInt(input.value) || 0);
+const score = div.querySelector('.score').innerText;
+const rec = div.querySelector('.rec').innerText;
+const msg = div.querySelector('.msg').innerText;
+csv += `"${title}",${values.join(',')},${score},"${rec}","${msg}"\n`;
+});
+const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.download = 'sales_request_evaluation.csv';
+link.click();
+}
+function scrollToTop() {
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.onscroll = function() {
+document.getElementById('backToTop').style.display = (document.documentElement.scrollTop > 300) ? 'block' : 'none';
+};
+window.onload = function() {
+addRequestEntry();
+};
 
-    <label>Request Title:</label>
-    <textarea id="requestTitle"></textarea>
+function removeEntry(button) {
+  button.closest('.request-entry, .idea-entry, .task-entry').remove();
+}
 
-    <label>Client Impact / Revenue Potential (1–5):</label>
-    <input type="number" id="revenueImpact" min="1" max="5">
-
-    <label>Urgency for Closing Deal (1–5):</label>
-    <input type="number" id="urgency" min="1" max="5">
-
-    <label>Reusability Across Clients (1–5):</label>
-    <input type="number" id="reuse" min="1" max="5">
-
-    <label>Fit with Product Roadmap (1–5):</label>
-    <input type="number" id="roadmap" min="1" max="5">
-
-    <label>Effort to Implement (1–5, lower is better):</label>
-    <input type="number" id="effort" min="1" max="5">
-
-    <label>Client Size (1–5):</label>
-    <input type="number" id="clientSize" min="1" max="5">
-
-    <label>Sales Director Priority (1–5):</label>
-    <input type="number" id="salesPriority" min="1" max="5">
-
-    <button onclick="evaluateRequest()">Evaluate Request</button>
-
-    <div class="result" id="result"></div>
-  </div>
-
-  <script>
-    function evaluateRequest() {
-      const revenue = parseInt(document.getElementById('revenueImpact').value) || 0;
-      const urgency = parseInt(document.getElementById('urgency').value) || 0;
-      const reuse = parseInt(document.getElementById('reuse').value) || 0;
-      const roadmap = parseInt(document.getElementById('roadmap').value) || 0;
-      const effort = parseInt(document.getElementById('effort').value) || 0;
-      const clientSize = parseInt(document.getElementById('clientSize').value) || 0;
-      const salesPriority = parseInt(document.getElementById('salesPriority').value) || 0;
-
-      const positiveScore = revenue + urgency + reuse + roadmap + clientSize + salesPriority;
-      const finalScore = positiveScore - effort;
-
-      let priority = '';
-      let message = '';
-
-      if (finalScore >= 22) {
-        priority = '🚀 Must Execute';
-        message = 'Add to immediate delivery plan';
-      } else if (finalScore >= 16) {
-        priority = '✅ Commit This Quarter';
-        message = 'Align with delivery and inform sales';
-      } else if (finalScore >= 10) {
-        priority = '⏳ Consider Later';
-        message = 'Keep in backlog for future fit';
-      } else {
-        priority = '❌ Reject or Reframe';
-        message = 'Not aligned or feasible currently';
-      }
-
-      document.getElementById('result').innerHTML =
-        `<strong>Request:</strong> ${document.getElementById('requestTitle').value}<br>` +
-        `<strong>Score:</strong> ${finalScore} / 30<br>` +
-        `<strong>Recommendation:</strong> ${priority}<br>` +
-        `<strong>Message:</strong> ${message}`;
-    }
-  </script>
+</script>
 </body>
 </html>

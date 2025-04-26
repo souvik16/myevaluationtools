@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Internal Tool Request Evaluator</title>
+<title>Sales Request Evaluator</title>
 <style>
 body { font-family: 'Segoe UI', sans-serif; background: #f6f9fc; margin: 0; padding: 40px; }
 .container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.08); }
@@ -18,61 +18,15 @@ textarea { height: 36px; resize: none; }
 .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
 button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.3s ease; }
 button:hover { background-color: #218838; }
-.result { margin-top: 10px; padding: 12px; border-radius: 6px; font-size: 14px; background-color: #f1f7fc; border-left: 6px solid #007bff; }
+.result { margin-top: 10px; padding: 12px; border-radius: 6px; font-size: 14px; border-left: 6px solid #007bff; background-color: #f1f7fc; }
 #backToTop { display: none; position: fixed; bottom: 30px; right: 30px; background: #007bff; color: white; border: none; border-radius: 50%; padding: 15px 18px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 #backToTop:hover { background-color: #0056b3; }
 @media (max-width: 768px) { .row { flex-direction: column; } .field { flex: 1 1 100%; } .button-group { flex-direction: column; align-items: center; } }
-
-.remove-btn  {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-.remove-btn:hover {
-  background-color: #c62828;
-}
-
-
-.remove-btn  {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  color: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-.request-entry:hover .remove-btn,
-.idea-entry:hover .remove-btn  {
-  color: #e74c3c;
-}
-
-
-.remove-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #ff5c5c;
-  cursor: pointer;
-}
-
 </style>
 </head>
 <body>
 <div class="container">
-<h2>Internal Tool Request Evaluator</h2>
+<h2>Sales Request Evaluator</h2>
 <div class="button-group">
 <button onclick="addRequestEntry()">➕ Add Request</button>
 <button onclick="sortRequests()">🔽 Sort by Score</button>
@@ -88,19 +42,19 @@ requestCount++;
 const div = document.createElement('div');
 div.className = 'request-entry';
 div.innerHTML = `
-<button class="remove-btn" onclick="removeEntry(this)">×</button>
 <div class="row">
-<div class="field"><label>Request Summary:</label><textarea>${existingData ? existingData.summary : ''}</textarea></div>
-<div class="field"><label>Time Saved per Use (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.time : ''}"></div>
-<div class="field"><label>Frequency of Use (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.frequency : ''}"></div>
-<div class="field"><label>Users Impacted (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.users : ''}"></div>
-<div class="field"><label>Criticality to Operations (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.criticality : ''}"></div>
+<div class="field"><label>Request Title:</label><textarea>${existingData ? existingData.title : ''}</textarea></div>
+<div class="field"><label>Revenue Impact (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.revenue : ''}"></div>
+<div class="field"><label>Urgency (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.urgency : ''}"></div>
+<div class="field"><label>Reusability (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.reuse : ''}"></div>
+<div class="field"><label>Roadmap Fit (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.roadmap : ''}"></div>
 </div>
 <div class="row">
-<div class="field"><label>Reusability Across Teams (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.reuse : ''}"></div>
-<div class="field"><label>Implementation Complexity (1–5, lower better):</label><input type="number" min="1" max="5" value="${existingData ? existingData.complexity : ''}"></div>
+<div class="field"><label>Effort to Implement (1–5, lower better):</label><input type="number" min="1" max="5" value="${existingData ? existingData.effort : ''}"></div>
+<div class="field"><label>Client Size (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.clientSize : ''}"></div>
+<div class="field"><label>Sales Director Priority (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.priority : ''}"></div>
 </div>
-<div class="result"><strong>Request:</strong><br><strong>Score:</strong> <span class="score">0</span> / 35<br><strong>Recommendation:</strong> <span class="rec"></span><br><strong>Message:</strong> <span class="msg"></span></div>
+<div class="result"><strong>Request:</strong><br><strong>Score:</strong> <span class="score">0</span> / 40<br><strong>Recommendation:</strong> <span class="rec"></span><br><strong>Message:</strong> <span class="msg"></span></div>
 `;
 document.getElementById('requestList').appendChild(div);
 Array.from(div.querySelectorAll('input, textarea')).forEach(el => { el.addEventListener('input', () => evaluate(div)); });
@@ -108,19 +62,19 @@ evaluate(div);
 }
 function evaluate(div) {
 const inputs = div.querySelectorAll('input');
-let score = 0;
-inputs.forEach((input, index) => {
-const val = parseInt(input.value) || 0;
-score += (index === 6) ? (6 - val) : val; // Invert complexity
-});
+const score = Array.from(inputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
 div.querySelector('.score').innerText = score;
 const rec = div.querySelector('.rec');
-const msg = div.querySelector('.msg');
 const box = div.querySelector('.result');
-if (score >= 30) { rec.innerText = '🚀 Must Execute'; msg.innerText = 'Critical, immediate delivery recommended'; box.style.background = '#d4edda'; box.style.borderLeft = '6px solid #2e7d32'; }
-else if (score >= 24) { rec.innerText = '✅ Commit'; msg.innerText = 'Good potential, prioritize in roadmap'; box.style.background = '#fff8e1'; box.style.borderLeft = '6px solid #fbc02d'; }
-else if (score >= 18) { rec.innerText = '⏳ Consider'; msg.innerText = 'Useful but not urgent, monitor demand'; box.style.background = '#fff3e0'; box.style.borderLeft = '6px solid #fb8c00'; }
-else { rec.innerText = '❌ Reject'; msg.innerText = 'Low impact, deprioritize or drop'; box.style.background = '#ffebee'; box.style.borderLeft = '6px solid #e53935'; }
+if (score >= 30) { box.style.background = '#d4edda'; box.style.borderLeft = '6px solid #2e7d32'; }
+else if (score >= 24) { box.style.background = '#fff8e1'; box.style.borderLeft = '6px solid #fbc02d'; }
+else if (score >= 18) { box.style.background = '#fff3e0'; box.style.borderLeft = '6px solid #fb8c00'; }
+else { box.style.background = '#ffebee'; box.style.borderLeft = '6px solid #e53935'; }
+const msg = div.querySelector('.msg');
+if (score >= 30) { rec.innerText = '🚀 Must Execute'; msg.innerText = 'Add to immediate delivery plan'; }
+else if (score >= 24) { rec.innerText = '✅ Commit'; msg.innerText = 'Prioritize in current roadmap'; }
+else if (score >= 18) { rec.innerText = '⏳ Consider'; msg.innerText = 'Evaluate after higher priority items'; }
+else { rec.innerText = '❌ Reject'; msg.innerText = 'Do not pursue at this time'; }
 }
 function sortRequests() {
 const requestList = document.getElementById('requestList');
@@ -134,21 +88,21 @@ requestList.innerHTML = '';
 requests.forEach(req => requestList.appendChild(req));
 }
 function downloadCSV() {
-let csv = "Request Summary,Time Saved per Use,Frequency of Use,Users Impacted,Criticality to Operations,Reusability Across Teams,Implementation Complexity,Score,Recommendation,Message\n";
+let csv = "Request Title,Revenue Impact,Urgency,Reusability,Roadmap Fit,Effort to Implement,Client Size,Sales Director Priority,Score,Recommendation,Message\n";
 const requests = document.querySelectorAll('.request-entry');
 requests.forEach(div => {
-const summary = div.querySelector('textarea').value.replace(/,/g, ';');
+const title = div.querySelector('textarea').value.replace(/,/g, ';');
 const inputs = div.querySelectorAll('input');
 const values = Array.from(inputs).map(input => parseInt(input.value) || 0);
 const score = div.querySelector('.score').innerText;
 const rec = div.querySelector('.rec').innerText;
 const msg = div.querySelector('.msg').innerText;
-csv += `"${summary}",${values.join(',')},${score},"${rec}","${msg}"\n`;
+csv += `"${title}",${values.join(',')},${score},"${rec}","${msg}"\n`;
 });
 const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 const link = document.createElement('a');
 link.href = URL.createObjectURL(blob);
-link.download = 'internal_tool_request_evaluation.csv';
+link.download = 'sales_request_evaluation.csv';
 link.click();
 }
 function scrollToTop() {
@@ -160,11 +114,6 @@ document.getElementById('backToTop').style.display = (document.documentElement.s
 window.onload = function() {
 addRequestEntry();
 };
-
-function removeEntry(button) {
-  button.closest('.request-entry, .idea-entry, .task-entry').remove();
-}
-
 </script>
 </body>
 </html>

@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enablement & Documentation Task Evaluation</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #f6f9fc; margin: 0; padding: 40px; }
+.container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.08); }
+h2 { text-align: center; color: #2c3e50; }
+.task-entry { border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; position: relative; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; justify-content: space-between; }
+.field { flex: 1 1 calc(20% - 10px); display: flex; flex-direction: column; min-width: 150px; }
+label { font-weight: 600; margin-bottom: 6px; color: #34495e; font-size: 13px; }
+input[type="number"], textarea { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; box-sizing: border-box; }
+textarea { height: 36px; resize: none; }
+.button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.3s ease; }
+button:hover { background-color: #218838; }
+.result { margin-top: 10px; padding: 12px; border-radius: 6px; font-size: 14px; }
+#backToTop { display: none; position: fixed; bottom: 30px; right: 30px; background: #007bff; color: white; border: none; border-radius: 50%; padding: 15px 18px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+#backToTop:hover { background-color: #0056b3; }
+@media (max-width: 768px) { .row { flex-direction: column; } .field { flex: 1 1 100%; } .button-group { flex-direction: column; align-items: center; } }
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Enablement & Documentation Task Evaluation</h2>
+<div class="button-group">
+<button onclick="addTaskEntry()">➕ Add Task</button>
+<button onclick="sortTasks()">🔽 Sort by Score</button>
+<button onclick="downloadCSV()">📥 Download CSV</button>
+</div>
+<div id="taskList"></div>
+</div>
+<button id="backToTop" onclick="scrollToTop()">🔝</button>
+<script>
+let taskCount = 0;
+function addTaskEntry(existingData = null) {
+taskCount++;
+const div = document.createElement('div');
+div.className = 'task-entry';
+div.innerHTML = `
+<div class="row">
+<div class="field"><label>Task Summary:</label><textarea>${existingData ? existingData.summary : ''}</textarea></div>
+<div class="field"><label>Urgency (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.urgency : ''}"></div>
+<div class="field"><label>Sales/CS Dependency (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.sales : ''}"></div>
+<div class="field"><label>Client Success Impact (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.client : ''}"></div>
+<div class="field"><label>Reusability (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.reuse : ''}"></div>
+</div>
+<div class="row">
+<div class="field"><label>Time to Create (1–5, lower better):</label><input type="number" min="1" max="5" value="${existingData ? existingData.time : ''}"></div>
+<div class="field"><label>Clarity Gap it Solves (1–5):</label><input type="number" min="1" max="5" value="${existingData ? existingData.gap : ''}"></div>
+</div>
+<div class="result">Score: <span class="score">0</span></div>
+`;
+document.getElementById('taskList').appendChild(div);
+Array.from(div.querySelectorAll('input, textarea')).forEach(el => { el.addEventListener('input', () => evaluate(div)); });
+evaluate(div);
+}
+function evaluate(div) {
+const inputs = div.querySelectorAll('input');
+const score = Array.from(inputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
+div.querySelector('.score').innerText = score;
+const result = div.querySelector('.result');
+if (score >= 20) { result.style.background = '#d4edda'; }
+else if (score >= 15) { result.style.background = '#fff3cd'; }
+else if (score >= 10) { result.style.background = '#ffeeba'; }
+else { result.style.background = '#f8d7da'; }
+}
+function sortTasks() {
+const taskList = document.getElementById('taskList');
+const tasks = Array.from(taskList.children);
+tasks.sort((a, b) => {
+const aScore = parseInt(a.querySelector('.score').innerText) || 0;
+const bScore = parseInt(b.querySelector('.score').innerText) || 0;
+return bScore - aScore;
+});
+taskList.innerHTML = '';
+tasks.forEach(task => taskList.appendChild(task));
+}
+function downloadCSV() {
+let csv = "Task Summary,Urgency,Sales/CS Dependency,Client Success Impact,Reusability,Time to Create,Clarity Gap,Score\n";
+const tasks = document.querySelectorAll('.task-entry');
+tasks.forEach(div => {
+const name = div.querySelector('textarea').value.replace(/,/g, ';');
+const inputs = div.querySelectorAll('input');
+const values = Array.from(inputs).map(input => parseInt(input.value) || 0);
+const score = div.querySelector('.score').innerText;
+csv += `"${name}",${values.join(',')},${score}\n`;
+});
+const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.download = 'enablement_task_evaluation.csv';
+link.click();
+}
+function scrollToTop() {
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.onscroll = function() {
+document.getElementById('backToTop').style.display = (document.documentElement.scrollTop > 300) ? 'block' : 'none';
+};
+window.onload = function() {
+addTaskEntry();
+};
+</script>
+</body>
+</html>

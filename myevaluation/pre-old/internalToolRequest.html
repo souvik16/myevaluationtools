@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Internal Tool Request Evaluator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.07);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #34495e;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 60px;
+    }
+    button {
+      background-color: #e67e22;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #d35400;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #fff6eb;
+      border-left: 6px solid #e67e22;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Internal Tool Request Evaluation</h2>
+
+    <label>Request Summary:</label>
+    <textarea id="requestSummary"></textarea>
+
+    <label>Time Saved per Use (1–5):</label>
+    <input type="number" id="timeSaved" min="1" max="5">
+
+    <label>Frequency of Use (1–5):</label>
+    <input type="number" id="usageFreq" min="1" max="5">
+
+    <label># of Users Impacted (1–5):</label>
+    <input type="number" id="userCount" min="1" max="5">
+
+    <label>Criticality to Operations (1–5):</label>
+    <input type="number" id="criticality" min="1" max="5">
+
+    <label>Reusability Across Teams (1–5):</label>
+    <input type="number" id="reusability" min="1" max="5">
+
+    <label>Implementation Complexity (1–5, lower is better):</label>
+    <input type="number" id="complexity" min="1" max="5">
+
+    <button onclick="evaluateInternalTool()">Evaluate Request</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function evaluateInternalTool() {
+      const timeSaved = parseInt(document.getElementById('timeSaved').value) || 0;
+      const usageFreq = parseInt(document.getElementById('usageFreq').value) || 0;
+      const userCount = parseInt(document.getElementById('userCount').value) || 0;
+      const criticality = parseInt(document.getElementById('criticality').value) || 0;
+      const reusability = parseInt(document.getElementById('reusability').value) || 0;
+      const complexity = parseInt(document.getElementById('complexity').value) || 0;
+
+      const positiveScore = timeSaved + usageFreq + userCount + criticality + reusability;
+      const finalScore = positiveScore - complexity;
+
+      let recommendation = '';
+      let message = '';
+
+      if (finalScore >= 20) {
+        recommendation = '🚀 High Impact';
+        message = 'Prioritize in internal roadmap';
+      } else if (finalScore >= 14) {
+        recommendation = '✅ Worth Building';
+        message = 'Align with next ops sprint';
+      } else if (finalScore >= 8) {
+        recommendation = '⏳ Useful, Not Urgent';
+        message = 'Park and revisit when bandwidth allows';
+      } else {
+        recommendation = '❌ Low Priority';
+        message = 'Not significant impact or too complex now';
+      }
+
+      document.getElementById('result').innerHTML =
+        `<strong>Request:</strong> ${document.getElementById('requestSummary').value}<br>` +
+        `<strong>Score:</strong> ${finalScore} / 25<br>` +
+        `<strong>Recommendation:</strong> ${recommendation}<br>` +
+        `<strong>Message:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>
