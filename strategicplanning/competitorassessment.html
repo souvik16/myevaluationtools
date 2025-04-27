@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitor Assessment - Tab Layout</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef6fb;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .tab-button {
+      background-color: #3498db;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .tab-button.active {
+      background-color: #2c80b4;
+    }
+    .tab-content {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto 30px;
+      text-align: left;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      background-color: #f9fcff;
+    }
+    button.download-button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+  </style>
+</head>
+<body>
+
+<button id="notesToggle">
+  <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+  Notes
+</button>
+<div id="notesPanel">
+  <strong>Notes:</strong><br/>
+  <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+</div>
+
+<h1>Competitor Assessment</h1>
+<p class="description">Analyze your competitive landscape by sectioning your analysis into key areas for better strategic clarity.</p>
+
+<div class="tabs">
+  <button class="tab-button active" onclick="openTab(event, 'competitors')">Key Competitors</button>
+  <button class="tab-button" onclick="openTab(event, 'strengths')">Competitor Strengths</button>
+  <button class="tab-button" onclick="openTab(event, 'weaknesses')">Competitor Weaknesses</button>
+  <button class="tab-button" onclick="openTab(event, 'advantage')">Our Competitive Advantage</button>
+  <button class="tab-button" onclick="openTab(event, 'threats')">Threats from Competitors</button>
+</div>
+
+<div id="competitors" class="tab-content active">
+  <h2>Key Competitors</h2>
+  <textarea id="keycompetitors" placeholder="List your major competitors here..."></textarea>
+</div>
+
+<div id="strengths" class="tab-content">
+  <h2>Competitor Strengths</h2>
+  <textarea id="competitorstrengths" placeholder="Where do your competitors outperform you?"></textarea>
+</div>
+
+<div id="weaknesses" class="tab-content">
+  <h2>Competitor Weaknesses</h2>
+  <textarea id="competitorweaknesses" placeholder="Where are your competitors vulnerable?"></textarea>
+</div>
+
+<div id="advantage" class="tab-content">
+  <h2>Our Competitive Advantage</h2>
+  <textarea id="ouradvantage" placeholder="What makes your product/service better or unique?"></textarea>
+</div>
+
+<div id="threats" class="tab-content">
+  <h2>Threats from Competitors</h2>
+  <textarea id="competitorthreats" placeholder="Potential risks posed by competitors?"></textarea>
+</div>
+
+<button class="download-button" onclick="downloadCanvas()">📥 Download Competitor Assessment</button>
+
+<script>
+function openTab(evt, tabName) {
+  var i, tabcontent, tabbuttons;
+  tabcontent = document.getElementsByClassName("tab-content");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].classList.remove("active");
+  }
+  tabbuttons = document.getElementsByClassName("tab-button");
+  for (i = 0; i < tabbuttons.length; i++) {
+    tabbuttons[i].classList.remove("active");
+  }
+  document.getElementById(tabName).classList.add("active");
+  evt.currentTarget.classList.add("active");
+}
+
+function downloadCanvas() {
+  const keycompetitors = document.getElementById('keycompetitors').value.trim();
+  const competitorstrengths = document.getElementById('competitorstrengths').value.trim();
+  const competitorweaknesses = document.getElementById('competitorweaknesses').value.trim();
+  const ouradvantage = document.getElementById('ouradvantage').value.trim();
+  const competitorthreats = document.getElementById('competitorthreats').value.trim();
+  const notes = document.getElementById('globalNotes').value.trim();
+
+  const content = 
+`Competitor Assessment
+
+Key Competitors:
+${keycompetitors}
+
+Competitor Strengths:
+${competitorstrengths}
+
+Competitor Weaknesses:
+${competitorweaknesses}
+
+Our Competitive Advantage:
+${ouradvantage}
+
+Threats from Competitors:
+${competitorthreats}
+
+📝 Notes:
+${notes || "No notes added."}
+`;
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Competitor_Assessment.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Notes toggle
+const notesBox = document.getElementById('globalNotes');
+const notesPanel = document.getElementById('notesPanel');
+const toggleBtn = document.getElementById('notesToggle');
+toggleBtn.addEventListener('click', () => {
+  notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+});
+notesBox.value = '';
+</script>
+
+</body>
+</html>

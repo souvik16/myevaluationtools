@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Porter's Value Chain - Input & Download</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef6fb;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .value-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .chain-cell {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-top: 5px solid #3498db;
+      width: 220px;
+      min-height: 250px;
+      text-align: left;
+      transition: transform 0.2s;
+    }
+    .chain-cell:hover {
+      transform: scale(1.02);
+    }
+    .chain-cell h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+      background-color: #f9fcff;
+    }
+    button.download-button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+        align-items: center;
+      }
+      .chain-cell {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button id="notesToggle">
+  <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+  Notes
+</button>
+<div id="notesPanel">
+  <strong>Notes:</strong><br/>
+  <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+</div>
+
+<h1>Porter's Value Chain</h1>
+<p class="description">Analyze your internal activities across Primary and Support activities to find competitive advantage opportunities.</p>
+
+<div class="value-chain">
+  <div class="row">
+    <div class="chain-cell">
+      <h2>Firm Infrastructure</h2>
+      <textarea id="infrastructure" placeholder="e.g., Management, finance, legal, planning"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Human Resource Management</h2>
+      <textarea id="hr" placeholder="e.g., Recruitment, training, development"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Technology Development</h2>
+      <textarea id="technology" placeholder="e.g., R&D, innovation, technology upgrades"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Procurement</h2>
+      <textarea id="procurement" placeholder="e.g., Purchasing raw materials, supplies"></textarea>
+    </div>
+  </div>
+
+  <hr style="margin: 30px 0; border: none; height: 2px; background-color: #ccc;">
+
+  <div class="row">
+    <div class="chain-cell">
+      <h2>Inbound Logistics</h2>
+      <textarea id="inbound" placeholder="e.g., Receiving, warehousing, inventory control"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Operations</h2>
+      <textarea id="operations" placeholder="e.g., Transforming inputs into final product"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Outbound Logistics</h2>
+      <textarea id="outbound" placeholder="e.g., Distribution, delivery, order fulfillment"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Marketing & Sales</h2>
+      <textarea id="marketing" placeholder="e.g., Promotion, pricing, selling"></textarea>
+    </div>
+    <div class="chain-cell">
+      <h2>Service</h2>
+      <textarea id="service" placeholder="e.g., After-sales service, maintenance"></textarea>
+    </div>
+  </div>
+</div>
+
+<button class="download-button" onclick="downloadCanvas()">📥 Download Value Chain</button>
+
+<script>
+function downloadCanvas() {
+  const infrastructure = document.getElementById('infrastructure').value.trim();
+  const hr = document.getElementById('hr').value.trim();
+  const technology = document.getElementById('technology').value.trim();
+  const procurement = document.getElementById('procurement').value.trim();
+  const inbound = document.getElementById('inbound').value.trim();
+  const operations = document.getElementById('operations').value.trim();
+  const outbound = document.getElementById('outbound').value.trim();
+  const marketing = document.getElementById('marketing').value.trim();
+  const service = document.getElementById('service').value.trim();
+  const notes = document.getElementById('globalNotes').value.trim();
+
+  const content = 
+`Porter's Value Chain
+
+Support Activities:
+Firm Infrastructure:
+${infrastructure}
+
+Human Resource Management:
+${hr}
+
+Technology Development:
+${technology}
+
+Procurement:
+${procurement}
+
+Primary Activities:
+Inbound Logistics:
+${inbound}
+
+Operations:
+${operations}
+
+Outbound Logistics:
+${outbound}
+
+Marketing & Sales:
+${marketing}
+
+Service:
+${service}
+
+📝 Notes:
+${notes || "No notes added."}
+`;
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Porters_Value_Chain.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Notes toggle
+const notesBox = document.getElementById('globalNotes');
+const notesPanel = document.getElementById('notesPanel');
+const toggleBtn = document.getElementById('notesToggle');
+toggleBtn.addEventListener('click', () => {
+  notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+});
+notesBox.value = '';
+</script>
+
+</body>
+</html>

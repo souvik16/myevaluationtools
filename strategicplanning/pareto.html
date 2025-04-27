@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pareto Principle (80/20 Rule) - Input & Download</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef6fb;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    p.description {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .canvas-cell {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #3498db;
+      transition: transform 0.2s;
+    }
+    .canvas-cell:hover {
+      transform: scale(1.02);
+    }
+    .canvas-cell h2 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #2c3e50;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+      background-color: #f9fcff;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2c80b4;
+    }
+    #notesToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #notesPanel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      background-color: #fffef9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    #notesPanel textarea {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="notesToggle">
+    <img src="https://img.icons8.com/emoji/48/000000/memo-emoji.png" alt="Notes" style="vertical-align: middle; width: 20px; margin-right: 6px;">
+    Notes
+  </button>
+  <div id="notesPanel">
+    <strong>Notes:</strong><br/>
+    <textarea id="globalNotes" placeholder="Write your thoughts here... (auto-saved)"></textarea>
+  </div>
+
+  <h1>Pareto Principle (80/20 Rule)</h1>
+  <p class="description">Focus on the 20% of efforts that create 80% of the results. Identify key inputs, outputs, and your action plan.</p>
+
+  <div class="canvas-grid">
+    <div class="canvas-cell">
+      <h2>Major Inputs (Top 20%)</h2>
+      <textarea id="inputs" placeholder="e.g., Identify key activities or customers driving major outcomes"></textarea>
+    </div>
+    <div class="canvas-cell">
+      <h2>Major Outputs (80%)</h2>
+      <textarea id="outputs" placeholder="e.g., Highlight results achieved through key activities"></textarea>
+    </div>
+    <div class="canvas-cell">
+      <h2>Action Plan</h2>
+      <textarea id="actionplan" placeholder="e.g., Steps to optimize top-performing areas or address gaps"></textarea>
+    </div>
+  </div>
+
+  <button onclick="downloadCanvas()">📥 Download Pareto Analysis</button>
+
+<script>
+function downloadCanvas() {
+  const inputs = document.getElementById('inputs').value.trim();
+  const outputs = document.getElementById('outputs').value.trim();
+  const actionplan = document.getElementById('actionplan').value.trim();
+  const notes = document.getElementById('globalNotes').value.trim();
+
+  const content = 
+`Pareto Principle (80/20 Rule)
+
+Major Inputs (Top 20%):
+${inputs}
+
+Major Outputs (80%):
+${outputs}
+
+Action Plan:
+${actionplan}
+
+📝 Notes:
+${notes || "No notes added."}
+`;
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Pareto_Principle.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script>
+const notesBox = document.getElementById('globalNotes');
+const notesPanel = document.getElementById('notesPanel');
+const toggleBtn = document.getElementById('notesToggle');
+toggleBtn.addEventListener('click', () => {
+  notesPanel.style.display = (notesPanel.style.display === 'none' || !notesPanel.style.display) ? 'block' : 'none';
+});
+notesBox.value = '';
+</script>
+
+</body>
+</html>
