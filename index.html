@@ -5,69 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Management Dashboard</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; margin: 0; padding: 0; position: relative; }
     h1 { text-align: center; margin: 20px 0; color: #2c3e50; }
     .tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-    .tab-button {
-      padding: 10px 30px;
-      cursor: pointer;
-      background-color: #dfe6ed;
-      border: none;
-      border-radius: 6px 6px 0 0;
-      margin: 5px;
-      font-weight: bold;
-    }
+    .tab-button { padding: 10px 20px; cursor: pointer; background-color: #dfe6ed; border: none; border-radius: 6px 6px 0 0; margin: 5px; font-weight: bold; font-size: 14px; }
     .tab-button.active { background-color: #ffffff; border-bottom: 2px solid white; }
-    .tab-content {
-      display: none;
-      padding: 30px;
-      background-color: #ffffff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 1000px;
-      margin: auto;
-      border-radius: 0 0 10px 10px;
-    }
+    .tab-content { display: none; padding: 30px; background-color: #ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; border-radius: 0 0 10px 10px; }
     .tab-content.active { display: block; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.08);
-      text-align: center;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.08); text-align: center; }
     .card h2 { font-size: 18px; color: #333; margin-bottom: 10px; }
     .card p { font-size: 13px; color: #666; margin: 0 0 10px 0; }
-    .card a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .card a { display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 6px; text-decoration: none; font-weight: 600; }
     .card a:hover { background-color: #2c80b4; }
+    .chatbot-icon { position: fixed; top: 20px; right: 20px; background-color: #3498db; color: white; padding: 10px 14px; border-radius: 30px; cursor: pointer; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; }
+    .chatbot-window { display: none; position: fixed; top: 70px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); overflow: hidden; z-index: 1000; display: flex; flex-direction: column; }
+    .chatbot-header { background-color: #3498db; color: white; padding: 10px; font-weight: bold; text-align: center; }
+    .chatbot-body { padding: 10px; font-size: 14px; color: #333; flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .chatbot-input { display: flex; border-top: 1px solid #ccc; }
+    .chatbot-input input { flex: 1; border: none; padding: 10px; font-size: 14px; }
+    .chatbot-input button { border: none; padding: 10px; background: #3498db; color: white; font-weight: bold; cursor: pointer; }
+    .user-message { align-self: flex-end; background-color: #d1ecf1; color: #0c5460; padding: 8px 12px; border-radius: 10px; margin: 5px 0; max-width: 80%; }
+    .bot-message { align-self: flex-start; background-color: #f8d7da; color: #721c24; padding: 8px 12px; border-radius: 10px; margin: 5px 0; max-width: 80%; }
+    /* Different hover colors for each tab */
+    .tab-button.evaluations:hover { background-color: #ffebee; }
+    .tab-button.frameworks:hover { background-color: #e8f5e9; }
+    .tab-button.usercentred:hover { background-color: #e3f2fd; }
+    .tab-button.strategyexecution:hover { background-color: #fff3e0; }
+    .tab-button.gotomarket:hover { background-color: #f3e5f5; }
   </style>
 </head>
 <body>
-  <h1>Souvik Product Management Tools And Frameworks</h1>
-  <div class="tabs">
+
+<h1>Souvik Product Management Tools And Frameworks</h1>
+
+<div class="chatbot-icon" onclick="toggleChatbot()">
+  ❓ Need Help To Choose Your Framework?
+</div>
+
+<div id="chatbotWindow" class="chatbot-window" style="display: none;">
+  <div class="chatbot-header">StatBot Assistant</div>
+  <div class="chatbot-body" id="chatbotBody">
+    <div class="bot-message">Hi there! 👋<br>Tell me about your use case!</div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chatInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<div class="tabs">
     <button class="tab-button active" onclick="switchTab('evaluations')">My Evaluation Tools</button>
     <button class="tab-button" onclick="switchTab('frameworks')">Strategic Planning & Market Fit</button>
     <button class="tab-button" onclick="switchTab('usercentred')">🧩 User-Centric Thinking</button>
     <button class="tab-button" onclick="switchTab('strategyexecution')">📈 Product Strategy & Execution</button>
     <button class="tab-button" onclick="switchTab('gotomarket')">🛠 Go-to-Market & Validation</button>
   </div>
-
-  <div id="evaluations" class="tab-content active">
+  
+<div id="evaluations" class="tab-content active">
    <div class="grid">
       <div class="card"><h2>Feature / Enhancement Evaluator</h2><p>Score features based on business impact, tech effort, and user value.</p><a href="myevaluation/FeatureEnhancementFramework.html">Open</a></div>
       <div class="card"><h2>Sales Request Evaluator</h2><p>Evaluate ad-hoc client or sales asks for alignment and impact.</p><a href="myevaluation/salesRequestEvaluator.html">Open</a></div>
@@ -86,7 +81,7 @@
     <div class="grid">
       <div class="card"><h2>SWOT Analysis</h2><p>Identify your strengths, weaknesses, opportunities, and threats.</p><a href="strategicplanning/swot.html">Open</a></div>
       <div class="card"><h2>Porter's 5 Forces</h2><p>Analyze the competitive dynamics of your industry or product segment.</p><a href="strategicplanning/portus5.html">Open</a></div>
-      <div class="card"><h2>Fishbone Diagram</h2><p>Map and diagnose root causes behind a specific problem.</p><a href="strategicplanning/fishbone.html">Open</a></div>
+      <div class="card"><h2>Fishbone Diagram (Root Cause Analysis)</h2><p>Map and diagnose root causes behind a specific problem.</p><a href="strategicplanning/fishbone.html">Open</a></div>
       <div class="card"><h2>McKinsey 3 Horizons</h2><p>Segment innovation and investment across near, mid, and long term.</p><a href="strategicplanning/3horizon.html">Open</a></div>
       <div class="card"><h2>Blue Ocean Stratergy</h2><p>Create uncontested market space by eliminating, reducing, raising, and creating value factors..</p><a href="strategicplanning/blueocean.html">Open</a></div>
       <div class="card"><h2>Blue Score Card</h2><p>Translate mission and strategy into objectives across Financial, Customer, Internal, and Learning perspectives...</p><a href="strategicplanning/bsc.html">Open</a></div>
@@ -132,30 +127,130 @@
     </div>
   </div>
 
-  <script>
-    function switchTab(tabId) {
-    // Store active tab in history
-    history.pushState({ tab: tabId }, "", `#${tabId}`);
+<script>
+const CHAT_API_TOKEN = "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";
+const CHAT_API_URL = "https://souvik-16-frameworkagent.hf.space/api/v1/run/eb705c21-edc1-4800-8543-0bd488fabe5b";
 
-    // Tab UI switching
-    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelector(`.tab-button[onclick*="${tabId}"]`).classList.add('active');
-    document.getElementById(tabId).classList.add('active');
+function switchTab(tabId) {
+  history.pushState({ tab: tabId }, "", `#${tabId}`);
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelector(`.tab-button[onclick*="${tabId}"]`).classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+window.onload = function() {
+  const defaultTab = 'evaluations';
+  const tabId = location.hash.replace("#", "") || defaultTab;
+  switchTab(tabId);
+};
+
+window.onpopstate = function(event) {
+  const tabId = location.hash.replace("#", "") || "evaluations";
+  switchTab(tabId);
+};
+
+function toggleChatbot() {
+  const chatbot = document.getElementById('chatbotWindow');
+  chatbot.style.display = chatbot.style.display === 'flex' ? 'none' : 'flex';
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if (!message) return;
+
+  const chatbotBody = document.getElementById('chatbotBody');
+
+  chatbotBody.innerHTML += `<div class="user-message">${message}</div>`;
+  input.value = "";
+  chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+  const loadingMessage = document.createElement('div');
+  loadingMessage.className = 'bot-message';
+  loadingMessage.textContent = 'Analyzing...';
+  chatbotBody.appendChild(loadingMessage);
+  chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+  try {
+    const response = await fetch(CHAT_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${CHAT_API_TOKEN}`
+      },
+      body: JSON.stringify({
+        input_value: message,
+        output_type: "chat",
+        input_type: "chat",
+        session_id: "chat_user"
+      })
+    });
+
+    const data = await response.json();
+    const botText = data.outputs[0].outputs[0].outputs.message.message || 'No response.';
+
+    // Update first loading message with formatted framework name
+    loadingMessage.innerHTML = botText.replace(
+      /(Recommended Framework Name:\s*)(.*)/i,
+      '<strong>$1</strong><b>$2</b>'
+    );
+
+    // Extract framework name
+    const match = botText.match(/Recommended Framework Name:\s*(.*)/i);
+    if (match && match[1]) {
+      const frameworkName = match[1].trim().toLowerCase();
+      let foundLink = null;
+
+      document.querySelectorAll('.card').forEach(card => {
+        const title = card.querySelector('h2')?.innerText?.toLowerCase();
+        if (title && title.includes(frameworkName)) {
+          foundLink = card.querySelector('a')?.href;
+        }
+      });
+
+      const linkMessage = document.createElement('div');
+      linkMessage.className = 'bot-message';
+      if (foundLink) {
+        linkMessage.innerHTML = `<a href="${foundLink}" target="_blank" style="color: #3498db; font-weight: bold;">🔗 Open Framework</a>`;
+      } else {
+        linkMessage.innerHTML = `⚠️ Framework link not found in system.`;
+      }
+      chatbotBody.appendChild(linkMessage);
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+
+    // Add Tip message separately
+    const tipMessage = document.createElement('div');
+    tipMessage.className = 'bot-message';
+    tipMessage.textContent = '➡️ Tip: Hover over each tab to find where the framework is located!';
+    chatbotBody.appendChild(tipMessage);
+    chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+
+  } catch (error) {
+    loadingMessage.textContent = 'Error connecting to server.';
   }
+}
 
-  // Restore state on page load from hash
-  window.onload = function() {
-    const defaultTab = 'evaluations';
-    const tabId = location.hash.replace("#", "") || defaultTab;
-    switchTab(tabId);
-  };
+// Hover Tooltip
+ document.addEventListener("DOMContentLoaded", function() {
+  const tabs = document.querySelectorAll('.tab-button');
+  tabs.forEach(tab => {
+    tab.addEventListener('mouseenter', function() {
+      const tabId = tab.getAttribute('onclick').match(/'([^']+)'/)[1];
+      const tabContent = document.getElementById(tabId);
+      if (!tabContent) return;
 
-  // Handle back/forward navigation
-  window.onpopstate = function(event) {
-    const tabId = location.hash.replace("#", "") || "evaluations";
-    switchTab(tabId);
-  };
-  </script>
+      const cardTitles = Array.from(tabContent.querySelectorAll('.card h2'))
+        .map(card => '• ' + card.textContent.trim())
+        .join('\n');
+
+      tab.setAttribute('title', cardTitles || "No tiles available");
+    });
+  });
+ });
+</script>
+
 </body>
 </html>
